@@ -23,7 +23,7 @@ which is rather intuitive.
 
 However, additional complexity is added when we want to return error messages.
 I've decided to go for C style; return null on success, and an error message on failure, as follows:
-```
+```js
 let err = Prudence(/* */);
 if (err) {}
 ```
