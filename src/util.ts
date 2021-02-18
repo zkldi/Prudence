@@ -29,6 +29,10 @@ export function CreateFn(
     return validationFn;
 }
 
+/**
+ * Takes an error handler and returns a function that creates middlewares with it by default.
+ * @param errorHandler The error handler to implicitly pass to Middleware.
+ */
 export function CurryMiddleware(
     errorHandler: MiddlewareErrorHandler
 ): PrudenceMiddlewareGenWithHandler {
@@ -39,6 +43,15 @@ export function CurryMiddleware(
     ) => Middleware(schema, errorHandler, errorMessages, options);
 }
 
+/**
+ * Creates an express middleware that calls errorHandler if prudence fails to validate the input data.
+ * Uses req.query if the method is a GET request, and req.body if the method is not.
+ * If an error handler is not defined, it falls back to returning 400 Bad request with json { err: "error message" }.
+ * @param schema The schema to use in Prudence.
+ * @param errorHandler The error handler to call if validation failed.
+ * @param errorMessages Prudence error messages.
+ * @param options Prudence options.
+ */
 export function Middleware(
     schema: PrudenceSchema,
     errorHandler?: MiddlewareErrorHandler | null,
