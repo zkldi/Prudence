@@ -13,10 +13,13 @@
         "validator",
         "validation"
     ],
-    "files": ["js/**/*"],
+    "files": [
+        "js/**/*"
+    ],
     "author": "zkldi",
     "license": "MIT",
     "devDependencies": {
+        "@types/express-serve-static-core": "^4.17.18",
         "@types/mocha": "^8.2.0",
         "@types/node": "^14.14.28",
         "@typescript-eslint/eslint-plugin": "^4.15.0",
