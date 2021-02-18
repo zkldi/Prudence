@@ -10,7 +10,7 @@ import {
  * @param fn
  * @param errHandler
  */
-export function CreateValidationFunction(
+export function CreateFn(
     fn: ValidationFunction,
     errHandler: CustomErrorHandler
 ): ValidationFunctionWithErrorHandler {

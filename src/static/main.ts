@@ -1,18 +1,66 @@
 import { ValidationFunction } from "../../src/types";
-import { CreateValidationFunction } from "../util";
+import { CreateFn } from "../util";
 
 /**
  * Alias for Number.isSafeInteger
  */
-const isInteger = CreateValidationFunction(
+const isInteger = CreateFn(
     (self: unknown): boolean => Number.isSafeInteger(self),
     "Expected an integer."
 );
 
+const gt = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isFinite(self) && (self as number) > number,
+        `Expected number to be greater than ${number}.`
+    );
+
+const gte = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isFinite(self) && (self as number) >= number,
+        `Expected number to be greater than or equal to ${number}.`
+    );
+
+const lt = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isFinite(self) && (self as number) < number,
+        `Expected number to be greater than ${number}.`
+    );
+
+const lte = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isFinite(self) && (self as number) <= number,
+        `Expected number to be less than or equal to ${number}.`
+    );
+
+const gtInt = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > number,
+        `Expected number to be greater than ${number}.`
+    );
+
+const gteInt = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= number,
+        `Expected number to be greater than or equal to ${number}.`
+    );
+
+const ltInt = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) < number,
+        `Expected number to be greater than ${number}.`
+    );
+
+const lteInt = (number: number): ValidationFunction =>
+    CreateFn(
+        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) <= number,
+        `Expected number to be less than or equal to ${number}.`
+    );
+
 /**
  * Determines if a value is a positive integer.
  */
-const isPositiveInteger = CreateValidationFunction(
+const isPositiveInteger = CreateFn(
     (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= 0,
     "Expected a positive integer."
 );
@@ -20,7 +68,7 @@ const isPositiveInteger = CreateValidationFunction(
 /**
  * Determines if a value is a positive integer and not 0.
  */
-const isPositiveNonZeroInteger = CreateValidationFunction(
+const isPositiveNonZeroInteger = CreateFn(
     (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > 0,
     "Expected a positive non-zero integer."
 );
@@ -32,7 +80,7 @@ const isPositiveNonZeroInteger = CreateValidationFunction(
  * @param upperBound The upper bound. Inclusive.
  */
 function isBoundedInteger(lowerBound: number, upperBound: number): ValidationFunction {
-    return CreateValidationFunction(
+    return CreateFn(
         (self: unknown): boolean =>
             Number.isSafeInteger(self) &&
             (self as number) <= upperBound &&
@@ -75,6 +123,14 @@ const PrudenceStatic = {
     isPositiveNonZero,
     isIn,
     isInteger,
+    gt,
+    gte,
+    lt,
+    lte,
+    gtInt,
+    gteInt,
+    ltInt,
+    lteInt,
 };
 
 export default PrudenceStatic;
