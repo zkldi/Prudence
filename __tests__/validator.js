@@ -38,7 +38,7 @@ describe("Prudence Validators", () => {
             // under normal circumstances this would throw, instead
             // will return false.
 
-            expect(newValidator.Validate(null, {}).valid, "to be false");
+            expect(newValidator.Validate(null, {}), "to be", "Non-object provided for validation.");
         });
     });
 
@@ -349,8 +349,8 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to exhaustively satisfy",
-                    { valid: true }
+                    "to be",
+                    null
                 );
             });
 
@@ -364,11 +364,8 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: "[age]: Expected an integer.",
-                    }
+                    "to be",
+                    "[age]: Expected an integer."
                 );
             });
 
@@ -384,11 +381,8 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: `[<root level>]: These keys were not expected inside this object: foo1, foo2.`,
-                    }
+                    "to be",
+                    `[<root level>]: These keys were not expected inside this object: foo1, foo2.`
                 );
             });
 
@@ -404,11 +398,8 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: `[name]: Expected typeof string, received [object Object].`,
-                    }
+                    "to be",
+                    `[name]: Expected typeof string, received [object Object].`
                 );
             });
         });
@@ -434,8 +425,8 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to exhaustively satisfy",
-                    { valid: true }
+                    "to be",
+                    null
                 );
             });
 
@@ -451,11 +442,8 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: `[permissions.admin]: Expected typeof boolean, received foo.`,
-                    }
+                    "to be",
+                    `[permissions.admin]: Expected typeof boolean, received foo.`
                 );
             });
 
@@ -473,11 +461,8 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: `[permissions]: These keys were not expected inside this object: foo1, foo2.`,
-                    }
+                    "to be",
+                    `[permissions]: These keys were not expected inside this object: foo1, foo2.`
                 );
             });
 
@@ -491,11 +476,8 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: `[permissions]: Object does not match structure of schema, expected this to be an object.`,
-                    }
+                    "to be",
+                    `[permissions]: Object does not match structure of schema, expected this to be an object.`
                 );
             });
         });
@@ -517,8 +499,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaFn
                     ),
-                    "to exhaustively satisfy",
-                    { valid: true }
+                    "to be",
+                    null
                 );
             });
 
@@ -532,8 +514,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaFn
                     ),
-                    "to exhaustively satisfy",
-                    { valid: false, err: "[friends.3]: Expected an integer." }
+                    "to be",
+                    "[friends.3]: Expected an integer."
                 );
             });
 
@@ -553,8 +535,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaLiteral
                     ),
-                    "to exhaustively satisfy",
-                    { valid: true }
+                    "to be",
+                    null
                 );
             });
 
@@ -568,8 +550,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaLiteral
                     ),
-                    "to exhaustively satisfy",
-                    { valid: false, err: "[aliases.1]: Expected typeof string, received 123." }
+                    "to be",
+                    "[aliases.1]: Expected typeof string, received 123."
                 );
             });
 
@@ -604,8 +586,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaObject
                     ),
-                    "to exhaustively satisfy",
-                    { valid: true }
+                    "to be",
+                    null
                 );
             });
 
@@ -628,11 +610,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaObject
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: "[groupchats.1.name]: Expected typeof string, received 123.",
-                    }
+                    "to be",
+                    "[groupchats.1.name]: Expected typeof string, received 123."
                 );
             });
 
@@ -655,11 +634,8 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaObject
                     ),
-                    "to exhaustively satisfy",
-                    {
-                        valid: false,
-                        err: "[groupchats.0.members.2]: Expected an integer.",
-                    }
+                    "to be",
+                    "[groupchats.0.members.2]: Expected an integer."
                 );
             });
         });

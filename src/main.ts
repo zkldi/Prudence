@@ -1,5 +1,6 @@
 import { Validator, ValidateMain } from "./validator";
 import PrudenceStatic from "./static/main";
+import { CreateFn } from "./util";
 import { PrudenceSchema, ErrorMessages, PrudenceOptions, PrudenceReturn } from "./types";
 
 interface APIFunctionSelf {
@@ -23,7 +24,8 @@ type PrudenceAPI = APIFunctionSelf & PrudenceAPIStatic;
 const FunctionAPI: APIFunctionSelf = ValidateMain;
 
 const StaticAPI = {
-    Validator: Validator,
+    Validator,
+    CreateFn,
     ...PrudenceStatic,
 };
 

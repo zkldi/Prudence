@@ -1,5 +1,3 @@
-// We declare a lot of our types globally because this is a small package
-// and it doesn't really matter that much.
 export interface PrudenceOptions {
     /**
      * Allows objects to have excess keys versus the schema, such as { foo: 1, bar: 1} being valid to: { foo: "number" }.
@@ -19,15 +17,6 @@ export interface CustomErrorFunction {
 
 export type CustomErrorHandler = CustomErrorFunction | string;
 
-export interface PrudenceSuccessfulReturn {
-    valid: true;
-}
-
-export interface PrudenceErrorReturn {
-    valid: false;
-    err: string;
-}
-
 export type ErrorMessages = { [prop: string]: CustomErrorHandler | ErrorMessages };
 
 export type PrudenceSchema = { [prop: string]: ValidSchemaValue | PrudenceSchema };
@@ -42,4 +31,4 @@ export interface ValidationFunctionWithErrorHandler extends ValidationFunction {
     errorHandler: CustomErrorHandler;
 }
 
-export type PrudenceReturn = PrudenceErrorReturn | PrudenceSuccessfulReturn;
+export type PrudenceReturn = null | string;
