@@ -2,10 +2,6 @@
 
 The simple JS object validator.
 
-## Documentation
-
-(readthedocs)[https://prudence.readthedocs.io]
-
 ## Motivation
 
 Validating non-primitive input is a pain, and I found myself rewriting input validation a
@@ -74,7 +70,7 @@ if (err) {
 }
 ```
 
-Prudence also comes with a built in (express)[https://github.com/express/express] middleware generator.
+Prudence also comes with a built in [express](https://github.com/express/express) middleware generator.
 
 You can use this to create automatic input validation for your endpoints
 
@@ -112,4 +108,4 @@ let schema = {
 ```
 
 There are a decent amount of these static functions, and you can see more of
-them in the (documentation)[https://prudence.readthedocs.io].
+them in the docs (todo).
