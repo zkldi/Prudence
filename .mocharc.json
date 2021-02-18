@@ -1,0 +1,6 @@
+{
+    "slow": 75,
+    "ui": "bdd",
+    "spec": "__tests__/**/*.js",
+    "color": true
+}
