@@ -13,6 +13,21 @@ format to do things instead of using functions.
 In constrast, Prudence uses the schema such that it's identical to the structure of an expected object.
 Prudence also only two options for validation, a typeof check or a provided function predicate.
 
+## Returns
+
+Returning values from Prudence proved to be a bit of a pain. The initial approach was just to return a boolean, because it results in things like:
+```js
+if (!Prudence(/* */)) { }
+```
+which is rather intuitive.
+
+However, additional complexity is added when we want to return error messages.
+I've decided to go for C style; return null on success, and an error message on failure, as follows:
+```
+let err = Prudence(/* */);
+if (err) {}
+```
+
 ## Strings
 
 If the value in a schema is a string, the `typeof` the provided value is compared to the given one.
@@ -25,8 +40,8 @@ let schema = {
   rememberMe: "boolean"
 }
 
-// Returns { valid: true }, more on this in Returns.
-Prudence({
+// err is null
+let err = Prudence({
   username: "zkldi",
   rememberMe: true
 }, schema);
@@ -150,23 +165,6 @@ Prudence({
 ],
 }, fnSchema);
 ```
-
-## Returns
-
-Returning values from Prudence proved to be a bit of a pain. The initial approach was just to return a boolean, because it results in things like:
-```js
-if (!Prudence(/* */)) { }
-```
-which is rather intuitive.
-
-However, additional complexity is added when we want to return error messages.
-I've decided to go for C style; return false on success, and an error message on failure, as follows:
-```
-let err = Prudence(/* */);
-if (err) {}
-```
-
-This is a tiny bit counter-intuitive, but I cannot think of a case where you would not care about the error message returned, so it works out.
 
 ## Errors
 
