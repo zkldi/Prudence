@@ -271,14 +271,14 @@ function ValidateObject(
  * Determines if a function has an attached errorMessage.
  * @param fn The function to check.
  */
-function FunctionHasErrorHandler(fn: unknown): fn is ValidationFunctionWithErrorMsg {
+function FunctionHasErrorMsg(fn: unknown): fn is ValidationFunctionWithErrorMsg {
     return typeof fn === "function" && !!(fn as ValidationFunctionWithErrorMsg).errorMessage;
 }
 
 /**
  * Creates an error message.
  * @param errorMessage The error message to use.
- * @param objectVal The value we recieved.
+ * @param objectVal The value we received.
  * @param stringifiedKeyChain Where the above value was sourced from as a single string.
  */
 function CreateErrorMessage(
@@ -288,18 +288,14 @@ function CreateErrorMessage(
 ): string {
     if (typeof errorMessage === "string") {
         if (errorMessage.endsWith(".")) {
-            return `[${stringifiedKeyChain}]: ${errorMessage} Recieved ${
-                (objectVal as string).toString
-            }`;
+            return `[${stringifiedKeyChain}]: ${errorMessage} Received ${(objectVal as string).toString()}.`;
         }
 
-        return `[${stringifiedKeyChain}]: ${errorMessage}. Recieved ${
-            (objectVal as string).toString
-        }`;
+        return `[${stringifiedKeyChain}]: ${errorMessage}. Received ${(objectVal as string).toString()}.`;
     }
 
     throw new Error(
-        `[Prudence] Invalid error handler of ${errorMessage}. Error messages must be strings.`
+        `[Prudence] Invalid error message of ${errorMessage}. Error messages must be strings.`
     );
 }
 
@@ -326,7 +322,7 @@ function StringifyKeyChain(keyChain: string[]): string {
 
         if (key.includes(".")) {
             str += `["${key}"]`;
-        } else if (str.match(/^[0-9]/)) {
+        } else if (key.match(/^[0-9]/)) {
             // if starts with a number
             str += `[${key}]`;
         } else {
@@ -343,36 +339,36 @@ function StringifyKeyChain(keyChain: string[]): string {
  * @param schemaVal
  * @param keyChain
  * @param options
- * @param customErrorHandler
+ * @param customErrorMessage
  */
 function GetErrorMessage(
     objectVal: unknown,
     schemaVal: unknown,
     keyChain: string[],
     options: PrudenceOptions,
-    customErrorHandler?: ErrorMessages | string
+    customErrorMessage?: ErrorMessages | string
 ): string {
     let stringifiedKeyChain = StringifyKeyChain(keyChain);
 
     // If the consumer passes a malformed set of error messages, it's possible we might get
-    // an object here instead of an error handler.
-    if (typeof customErrorHandler === "object") {
+    // an object here instead of an error message.
+    if (typeof customErrorMessage === "object") {
         throw new Error(
-            `[Prudence] Invalid errorHandlers at ${stringifiedKeyChain}. Expected an error handler or undefined, but got an object.`
+            `[Prudence] Invalid customError at ${stringifiedKeyChain}. Expected an error message or undefined, but got an object.`
         );
     }
 
     // First check:
-    // Check if an attached custom error handler was sent.
-    if (customErrorHandler) {
-        return CreateErrorMessage(customErrorHandler, objectVal, stringifiedKeyChain);
+    // Check if an attached custom error message was sent.
+    if (customErrorMessage) {
+        return CreateErrorMessage(customErrorMessage, objectVal, stringifiedKeyChain);
     }
 
     // Second check:
-    // If we don't have a custom error handler, check if the schema value was a function.
-    // Functions are allowed to attach error handlers.
+    // If we don't have a custom error message, check if the schema value was a function.
+    // Functions are allowed to attach error messages.
     if (typeof schemaVal === "function") {
-        if (FunctionHasErrorHandler(schemaVal)) {
+        if (FunctionHasErrorMsg(schemaVal)) {
             return CreateErrorMessage(schemaVal.errorMessage, objectVal, stringifiedKeyChain);
         }
 
@@ -385,20 +381,20 @@ function GetErrorMessage(
         }
 
         if (schemaVal.startsWith("*")) {
-            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal} or no value.`;
+            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal} or no value. Received ${objectVal}.`;
         }
 
         if (schemaVal.startsWith("?")) {
-            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal} or null.`;
+            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal} or null. Received ${objectVal}.`;
         }
 
-        return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal}.`;
+        return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal}. Received ${objectVal}.`;
     }
 
     // failsafe: realistically this will always be caught previously in
     // ValidateValue.
     throw new Error(
-        `[Prudence] Invalid schema value ${(schemaVal as string).toString()} at ${stringifiedKeyChain}`
+        `[Prudence] Invalid schema value ${(schemaVal as string).toString()} at ${stringifiedKeyChain}.`
     );
 }
 
@@ -462,7 +458,7 @@ export {
     ValidateValue,
     GetErrorMessage,
     StringifyKeyChain,
-    CreateErrorMessage as InvokeCustomErrorHandler,
-    FunctionHasErrorHandler,
+    CreateErrorMessage,
+    FunctionHasErrorMsg,
     ValidateObject,
 };
