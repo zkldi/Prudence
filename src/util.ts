@@ -3,7 +3,6 @@
 import { NextFunction, Response, Request } from "express-serve-static-core";
 import Prudence from "./main";
 import {
-    CustomErrorHandler,
     ErrorMessages,
     MiddlewareErrorHandler,
     PrudenceMiddlewareGenWithHandler,
@@ -11,7 +10,7 @@ import {
     PrudenceReturn,
     PrudenceSchema,
     ValidationFunction,
-    ValidationFunctionWithErrorHandler,
+    ValidationFunctionWithErrorMsg,
 } from "./types";
 
 /**
@@ -20,12 +19,9 @@ import {
  * @param fn
  * @param errHandler
  */
-export function CreateFn(
-    fn: ValidationFunction,
-    errHandler: CustomErrorHandler
-): ValidationFunctionWithErrorHandler {
-    let validationFn = fn as ValidationFunctionWithErrorHandler;
-    validationFn.errorHandler = errHandler;
+export function CreateFn(fn: ValidationFunction, errMsg: string): ValidationFunctionWithErrorMsg {
+    let validationFn = fn as ValidationFunctionWithErrorMsg;
+    validationFn.errorMessage = errMsg;
     return validationFn;
 }
 

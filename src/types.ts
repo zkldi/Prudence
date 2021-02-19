@@ -40,9 +40,7 @@ export interface MiddlewareErrorHandler {
     (req: Request, res: Response, next: NextFunction, errorMessage: string): void;
 }
 
-export type CustomErrorHandler = CustomErrorFunction | string;
-
-export type ErrorMessages = { [prop: string]: CustomErrorHandler | ErrorMessages };
+export type ErrorMessages = { [prop: string]: string | ErrorMessages };
 
 export type PrudenceSchema = { [prop: string]: ValidSchemaValue | PrudenceSchema };
 
@@ -52,8 +50,8 @@ export interface ValidationFunction {
     (self: unknown, parent?: Record<string, unknown> | unknown[]): boolean;
 }
 
-export interface ValidationFunctionWithErrorHandler extends ValidationFunction {
-    errorHandler: CustomErrorHandler;
+export interface ValidationFunctionWithErrorMsg extends ValidationFunction {
+    errorMessage: string;
 }
 
 export type PrudenceReturn = null | string;

@@ -2,55 +2,112 @@ import { ValidationFunction } from "../../src/types";
 import { CreateFn } from "../util";
 
 /**
- * Alias for Number.isSafeInteger
+ * Alias for Number.isSafeInteger.
+ * @returns {ValidationFunction}
  */
 const isInteger = CreateFn(
     (self: unknown): boolean => Number.isSafeInteger(self),
     "Expected an integer."
 );
 
+/**
+ * Returns a validation function that checks if the passed value is a number and greater than
+ * the passed argument.
+ *
+ * @param number The number the value must be greater than.
+ * @returns {ValidationFunction}
+ */
 const gt = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) > number,
         `Expected number to be greater than ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is a number and greater than
+ * or equal to the passed argument.
+ *
+ * @param number The number the value must be greater than or equal to.
+ * @returns {ValidationFunction}
+ */
 const gte = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) >= number,
         `Expected number to be greater than or equal to ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is a number and less than
+ * the passed argument.
+ *
+ * @param number The number the value must be less than.
+ * @returns {ValidationFunction}
+ */
 const lt = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) < number,
         `Expected number to be greater than ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is a number and less than
+ * or equal to the passed argument.
+ *
+ * @param number The number the value must be less than or equal to.
+ * @returns {ValidationFunction}
+ */
 const lte = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) <= number,
         `Expected number to be less than or equal to ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is an integer and greater than
+ * the passed argument.
+ *
+ * @param number The number the value must be greater than.
+ * @returns {ValidationFunction}
+ */
 const gtInt = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > number,
         `Expected number to be greater than ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is an integer and greater than
+ * or equal to the passed argument.
+ *
+ * @param number The number the value must be greater than or equal to.
+ * @returns {ValidationFunction}
+ */
 const gteInt = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= number,
         `Expected number to be greater than or equal to ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is an integer and less than
+ * the passed argument.
+ *
+ * @param number The number the value must be less than.
+ * @returns {ValidationFunction}
+ */
 const ltInt = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) < number,
         `Expected number to be greater than ${number}.`
     );
 
+/**
+ * Returns a validation function that checks if the passed value is an integer and less than
+ * or equal to the passed argument.
+ *
+ * @param number The number the value must be less than or equal to.
+ * @returns {ValidationFunction}
+ */
 const lteInt = (number: number): ValidationFunction =>
     CreateFn(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) <= number,
