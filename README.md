@@ -2,6 +2,10 @@
 
 The simple JS object validator.
 
+## Documentation
+
+Read the documentation [here](https://prudence.readthedocs.io).
+
 ## Motivation
 
 Validating non-primitive input is a pain, and I found myself rewriting input validation a
@@ -108,4 +112,4 @@ let schema = {
 ```
 
 There are a decent amount of these static functions, and you can see more of
-them in the docs (todo).
+them in the [documentation](https://prudence.readthedocs.io)
