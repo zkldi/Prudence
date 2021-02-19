@@ -74,7 +74,7 @@ if (err) {
 }
 ```
 
-Prudence also comes with a built in [express](https://github.com/express/express) middleware generator.
+Prudence also comes with a built in [express](https://github.com/expressjs/express) middleware generator.
 
 You can use this to create automatic input validation for your endpoints
 
