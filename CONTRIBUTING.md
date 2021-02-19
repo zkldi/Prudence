@@ -1,5 +1,10 @@
 Be nice, I'm only one person.
 
+# Pull Requests
+
+Make sure the tests pass and coverage is 100%. Run ``npm run lint`` and ``npm t`` before submitting
+any pull requests.
+
 # Static Function Requests
 
 If you are requesting a new "built-in" function for Prudence, please make sure it solves an actual issue.
