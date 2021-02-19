@@ -112,4 +112,4 @@ let schema = {
 ```
 
 There are a decent amount of these static functions, and you can see more of
-them in the [documentation](https://prudence.readthedocs.io)
+them in the [documentation](https://prudence.readthedocs.io).
