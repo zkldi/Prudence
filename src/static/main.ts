@@ -172,6 +172,24 @@ function isIn(...values: unknown[]): ValidationFunction {
     return (self: unknown): boolean => values.includes(self);
 }
 
+/**
+ * Checks whether an item is a string and its length is between the two values.
+ * @param lower The lower bound for the length. Inclusive.
+ * @param upper The upper bound for the length. Inclusive.
+ */
+function isBoundedString(lower: number, upper: number) {
+    return (self: unknown): boolean =>
+        typeof self === "string" && self.length >= lower && self.length <= upper;
+}
+
+/**
+ * Checks whether a value is a string that matches the given regex.
+ * @param regex The regex to match.
+ */
+function regex(regex: RegExp) {
+    return (self: unknown): boolean => typeof self === "string" && regex.test(self);
+}
+
 const PrudenceStatic = {
     isBoundedInteger,
     isPositiveInteger,
@@ -188,6 +206,8 @@ const PrudenceStatic = {
     gteInt,
     ltInt,
     lteInt,
+    isBoundedString,
+    regex,
 };
 
 export default PrudenceStatic;
