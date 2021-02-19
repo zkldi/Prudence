@@ -4,6 +4,215 @@ const Prudence = require("../js/main").default;
 const { TryNonInts, TryNonFloats } = require("./utils");
 
 describe("Static Prudence Methods", () => {
+    describe("#gt", () => {
+        it("Should return a function", () => {
+            expect(Prudence.gt(1), "to be a function");
+        });
+
+        it("Should allow numbers > argument", () => {
+            expect(Prudence.gt(1)(5), "to be true");
+        });
+
+        it("Should disallow numbers < argument", () => {
+            expect(Prudence.gt(1)(0), "to be false");
+        });
+
+        it("Should reject equal values", () => {
+            expect(Prudence.gt(1)(1), "to be false");
+        });
+
+        it("Should allow floats", () => {
+            expect(Prudence.gt(1)(1.01), "to be true");
+        });
+
+        TryNonFloats(Prudence.gt(0));
+    });
+
+    describe("#gte", () => {
+        it("Should return a function", () => {
+            expect(Prudence.gte(1), "to be a function");
+        });
+
+        it("Should allow numbers >= argument", () => {
+            expect(Prudence.gte(1)(5), "to be true");
+        });
+
+        it("Should disallow numbers < argument", () => {
+            expect(Prudence.gte(1)(0), "to be false");
+        });
+
+        it("Should allow equal values", () => {
+            expect(Prudence.gte(1)(1), "to be true");
+        });
+
+        it("Should allow floats", () => {
+            expect(Prudence.gte(1)(1.01), "to be true");
+        });
+
+        TryNonFloats(Prudence.gte(0));
+    });
+
+    describe("#lt", () => {
+        it("Should return a function", () => {
+            expect(Prudence.lt(1), "to be a function");
+        });
+
+        it("Should allow numbers < argument", () => {
+            expect(Prudence.lt(1)(0), "to be true");
+        });
+
+        it("Should disallow numbers > argument", () => {
+            expect(Prudence.lt(1)(5), "to be false");
+        });
+
+        it("Should reject equal values", () => {
+            expect(Prudence.lt(1)(1), "to be false");
+        });
+
+        it("Should allow floats less than the value", () => {
+            expect(Prudence.lt(1)(0.99), "to be true");
+        });
+
+        it("Should disallow floats greater than the value", () => {
+            expect(Prudence.lt(1)(1.01), "to be false");
+        });
+        TryNonFloats(Prudence.lt(0));
+    });
+
+    describe("#lte", () => {
+        it("Should return a function", () => {
+            expect(Prudence.lte(1), "to be a function");
+        });
+
+        it("Should determine whether a number is <= the argument", () => {
+            expect(Prudence.lte(1)(5), "to be false");
+            expect(Prudence.lte(1)(0), "to be true");
+        });
+
+        it("Should allow equal values", () => {
+            expect(Prudence.lte(1)(1), "to be true");
+        });
+
+        it("Should allow floats less than the value", () => {
+            expect(Prudence.lte(1)(0.99), "to be true");
+        });
+
+        it("Should disallow floats greater than the value", () => {
+            expect(Prudence.lte(1)(1.01), "to be false");
+        });
+
+        TryNonFloats(Prudence.lte(0));
+    });
+
+    describe("#gtInt", () => {
+        it("Should return a function", () => {
+            expect(Prudence.gtInt(1), "to be a function");
+        });
+
+        it("Should allow numbers > argument", () => {
+            expect(Prudence.gtInt(1)(5), "to be true");
+        });
+
+        it("Should disallow numbers < argument", () => {
+            expect(Prudence.gtInt(1)(0), "to be false");
+        });
+
+        it("Should reject equal values", () => {
+            expect(Prudence.gtInt(1)(1), "to be false");
+        });
+
+        it("Should disallow floats less than the value", () => {
+            expect(Prudence.gtInt(1)(0.99), "to be false");
+        });
+
+        it("Should disallow floats greater than the value", () => {
+            expect(Prudence.gtInt(1)(1.01), "to be false");
+        });
+
+        TryNonFloats(Prudence.gtInt(0));
+    });
+
+    describe("#gteInt", () => {
+        it("Should return a function", () => {
+            expect(Prudence.gteInt(1), "to be a function");
+        });
+
+        it("Should allow numbers >= argument", () => {
+            expect(Prudence.gteInt(1)(5), "to be true");
+        });
+
+        it("Should disallow numbers < argument", () => {
+            expect(Prudence.gteInt(1)(0), "to be false");
+        });
+
+        it("Should allow equal values", () => {
+            expect(Prudence.gteInt(1)(1), "to be true");
+        });
+
+        it("Should disallow floats less than the value", () => {
+            expect(Prudence.gteInt(1)(0.99), "to be false");
+        });
+
+        it("Should disallow floats greater than the value", () => {
+            expect(Prudence.gteInt(1)(1.01), "to be false");
+        });
+
+        TryNonFloats(Prudence.gteInt(0));
+    });
+
+    describe("#ltInt", () => {
+        it("Should return a function", () => {
+            expect(Prudence.ltInt(1), "to be a function");
+        });
+
+        it("Should allow numbers < argument", () => {
+            expect(Prudence.ltInt(1)(0), "to be true");
+        });
+
+        it("Should disallow numbers > argument", () => {
+            expect(Prudence.ltInt(1)(5), "to be false");
+        });
+
+        it("Should reject equal values", () => {
+            expect(Prudence.ltInt(1)(1), "to be false");
+        });
+
+        it("Should disallow floats less than the value", () => {
+            expect(Prudence.ltInt(1)(0.99), "to be false");
+        });
+
+        it("Should disallow floats greater than the value", () => {
+            expect(Prudence.ltInt(1)(1.01), "to be false");
+        });
+
+        TryNonFloats(Prudence.ltInt(0));
+    });
+
+    describe("#lteInt", () => {
+        it("Should return a function", () => {
+            expect(Prudence.lteInt(1), "to be a function");
+        });
+
+        it("Should determine whether a number is <= the argument", () => {
+            expect(Prudence.lteInt(1)(5), "to be false");
+            expect(Prudence.lteInt(1)(0), "to be true");
+        });
+
+        it("Should allow equal values", () => {
+            expect(Prudence.lteInt(1)(1), "to be true");
+        });
+
+        it("Should disallow floats less than the value", () => {
+            expect(Prudence.lteInt(1)(0.99), "to be false");
+        });
+
+        it("Should disallow floats greater than the value", () => {
+            expect(Prudence.lteInt(1)(1.01), "to be false");
+        });
+
+        TryNonFloats(Prudence.lteInt(0));
+    });
+
     describe("#isPositiveInteger", () => {
         it("Should return true for positive integers", () => {
             expect(Prudence.isPositiveInteger(5), "to be true");

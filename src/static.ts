@@ -1,5 +1,5 @@
-import { ValidationFunction } from "../../src/types";
-import { CreateFn } from "../util";
+import { ValidationFunction } from "./types";
+import { CreateFn } from "./util";
 
 /**
  * Alias for Number.isSafeInteger.

@@ -1,5 +1,5 @@
 import { Validator, ValidateMain } from "./validator";
-import PrudenceStatic from "./static/main";
+import PrudenceStatic from "./static";
 import { CreateFn } from "./util";
 import { PrudenceSchema, ErrorMessages, PrudenceOptions, PrudenceReturn } from "./types";
 

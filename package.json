@@ -4,13 +4,16 @@
     "description": "The Simple Object Validator.",
     "main": "js/main.js",
     "scripts": {
-        "test": "tsc && mocha",
-        "coverage": "tsc && nyc mocha",
+        "test": "tsc && nyc mocha",
         "lint": "eslint ./src --ext .ts && eslint ./test --ext .js",
         "build": "tsc"
     },
     "nyc": {
-        "reporter": ["text", "html", "lcov"]
+        "reporter": ["text", "html", "lcov"],
+        "branches": 80,
+        "lines": 80,
+        "functions": 80,
+        "statements": 80
     },
     "keywords": [
         "object",
