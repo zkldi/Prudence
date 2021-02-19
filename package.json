@@ -2,11 +2,15 @@
     "name": "prudence",
     "version": "0.2.0",
     "description": "The Simple Object Validator.",
-    "main": "index.js",
+    "main": "js/main.js",
     "scripts": {
         "test": "tsc && mocha",
+        "coverage": "tsc && nyc mocha",
         "lint": "eslint ./src --ext .ts && eslint ./test --ext .js",
         "build": "tsc"
+    },
+    "nyc": {
+        "reporter": ["text", "html", "lcov"]
     },
     "keywords": [
         "object",
@@ -28,6 +32,7 @@
         "eslint-plugin-import": "^2.22.1",
         "eslint-plugin-prettier": "^3.3.1",
         "mocha": "^8.3.0",
+        "nyc": "^15.1.0",
         "typescript": "^4.1.5",
         "unexpected": "^12.0.0"
     }

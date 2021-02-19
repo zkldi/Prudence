@@ -4,8 +4,8 @@ const Prudence = require("../js/main").default;
 
 const {
     ValidateValue,
-    FunctionHasErrorHandler,
-    InvokeCustomErrorHandler,
+    FunctionHasErrorMsg,
+    CreateErrorMessage,
     StringifyKeyChain,
     GetErrorMessage,
 } = require("../js/validator");
@@ -155,64 +155,38 @@ describe("Prudence Validators", () => {
         });
     });
 
-    describe("#FunctionHasErrorHandler", () => {
-        it("Should correctly determine if a function has an error handler", () => {
+    describe("#FunctionHasErrorMsg", () => {
+        it("Should correctly determine if a function has an error message", () => {
             let fn = () => true;
-            fn.errorHandler = "foo";
-            expect(FunctionHasErrorHandler(fn), "to be true");
+            fn.errorMessage = "foo";
+            expect(FunctionHasErrorMsg(fn), "to be true");
         });
 
-        it("Should reject functions without error handlers", () => {
+        it("Should reject functions without error messages", () => {
             let fn = () => true;
-            expect(FunctionHasErrorHandler(fn), "to be false");
+            expect(FunctionHasErrorMsg(fn), "to be false");
         });
     });
 
-    describe("#InvokeCustomErrorHandler", () => {
-        it("Should return a prefixed string if error handler is a string", () => {
+    describe("#CreateErrorMessage", () => {
+        it("Should return a prefixed/suffixed string if error message is a string", () => {
             expect(
-                InvokeCustomErrorHandler(
+                CreateErrorMessage(
                     "Should be greater than 18.",
                     17,
                     "foo",
                     Prudence.Validator.defaultOptions
                 ),
                 "to be",
-                "[foo]: Should be greater than 18."
+                "[foo]: Should be greater than 18. Received 17."
             );
         });
 
-        it("Should return a custom string if error handler is a function", () => {
+        it("Should throw an error on invalid error message", () => {
             expect(
-                InvokeCustomErrorHandler(
-                    () => "blah",
-                    17,
-                    "foo",
-                    Prudence.Validator.defaultOptions
-                ),
-                "to be",
-                "[foo]: blah"
-            );
-        });
-
-        it("Should pass object value as the first argument to an error handler", () => {
-            expect(
-                InvokeCustomErrorHandler(
-                    (v) => v.toString(),
-                    17,
-                    "foo",
-                    Prudence.Validator.defaultOptions
-                ),
-                "to be",
-                "[foo]: 17"
-            );
-        });
-
-        it("Should throw an error on invalid error handler", () => {
-            expect(
-                () => InvokeCustomErrorHandler(null, 17, "foo", Prudence.Validator.defaultOptions),
+                () => CreateErrorMessage(null, 17, "foo", Prudence.Validator.defaultOptions),
                 "to throw",
-                "[Prudence] Invalid error handler of null. Error handlers must be strings or functions."
+                "[Prudence] Invalid error message of null. Error messages must be strings."
             );
         });
     });
@@ -227,11 +201,19 @@ describe("Prudence Validators", () => {
         });
 
         it("Should stringify a key chain starting with dots", () => {
-            expect(StringifyKeyChain(["f.oo", "bar"]), "to be", '"f.oo".bar');
+            expect(StringifyKeyChain(["f.oo", "bar"]), "to be", '["f.oo"].bar');
         });
 
         it("Should stringify a key chain with dots", () => {
             expect(StringifyKeyChain(["foo", "b.ar"]), "to be", 'foo["b.ar"]');
+        });
+
+        it("Should array-indexify keys that start with numbers", () => {
+            expect(StringifyKeyChain(["foo", "1"]), "to be", "foo[1]");
+        });
+
+        it("Should array-indexify keychains that start with numbers", () => {
+            expect(StringifyKeyChain(["1", "foo", "b.ar"]), "to be", '[1].foo["b.ar"]');
         });
     });
 
@@ -246,13 +228,13 @@ describe("Prudence Validators", () => {
                     "error message here"
                 ),
                 "to be",
-                "[foo.bar]: error message here"
+                "[foo.bar]: error message here. Received foo."
             );
         });
 
         it("Invoked custom error messages should take priority over function error messages", () => {
             let fn = () => true;
-            fn.errorHandler = "error 2";
+            fn.errorMessage = "error 2";
 
             expect(
                 GetErrorMessage(
@@ -263,7 +245,7 @@ describe("Prudence Validators", () => {
                     "error message here"
                 ),
                 "to be",
-                "[foo.bar]: error message here"
+                "[foo.bar]: error message here. Received foo."
             );
         });
 
@@ -278,13 +260,13 @@ describe("Prudence Validators", () => {
                         { someNestedProperty: "error message" }
                     ),
                 "to throw",
-                "[Prudence] Invalid errorHandlers at foo.bar. Expected an error handler or undefined, but got an object."
+                "[Prudence] Invalid customError at foo.bar. Expected an error message or undefined, but got an object."
             );
         });
 
-        it("Should use provided functions error handler if present", () => {
+        it("Should use provided functions error message if present", () => {
             let fn = () => true;
-            fn.errorHandler = "error 2";
+            fn.errorMessage = "error 2";
 
             expect(
                 GetErrorMessage(
@@ -295,7 +277,7 @@ describe("Prudence Validators", () => {
                     undefined
                 ),
                 "to be",
-                "[foo.bar]: error 2"
+                "[foo.bar]: error 2. Received foo."
             );
         });
 
@@ -325,7 +307,7 @@ describe("Prudence Validators", () => {
                     undefined
                 ),
                 "to be",
-                "[foo.bar]: Expected typeof string, received foo."
+                "[foo.bar]: Expected typeof string. Received foo."
             );
         });
     });
@@ -365,7 +347,7 @@ describe("Prudence Validators", () => {
                         flatSchema
                     ),
                     "to be",
-                    "[age]: Expected an integer."
+                    "[age]: Expected an integer. Received 18.5."
                 );
             });
 
@@ -399,7 +381,7 @@ describe("Prudence Validators", () => {
                         flatSchema
                     ),
                     "to be",
-                    `[name]: Expected typeof string, received [object Object].`
+                    `[name]: Expected typeof string. Received [object Object].`
                 );
             });
         });
@@ -443,7 +425,7 @@ describe("Prudence Validators", () => {
                         nestedSchema
                     ),
                     "to be",
-                    `[permissions.admin]: Expected typeof boolean, received foo.`
+                    `[permissions.admin]: Expected typeof boolean. Received foo.`
                 );
             });
 
@@ -477,7 +459,7 @@ describe("Prudence Validators", () => {
                         nestedSchema
                     ),
                     "to be",
-                    `[permissions]: Object does not match structure of schema, expected this to be an object.`
+                    `[permissions]: Object does not match structure of schema, expected this location to have an object.`
                 );
             });
         });
@@ -515,7 +497,7 @@ describe("Prudence Validators", () => {
                         arraySchemaFn
                     ),
                     "to be",
-                    "[friends.3]: Expected an integer."
+                    "[friends[3]]: Expected an integer. Received 15.5."
                 );
             });
 
@@ -551,7 +533,7 @@ describe("Prudence Validators", () => {
                         arraySchemaLiteral
                     ),
                     "to be",
-                    "[aliases.1]: Expected typeof string, received 123."
+                    "[aliases[1]]: Expected typeof string. Received 123."
                 );
             });
 
@@ -611,7 +593,7 @@ describe("Prudence Validators", () => {
                         arraySchemaObject
                     ),
                     "to be",
-                    "[groupchats.1.name]: Expected typeof string, received 123."
+                    "[groupchats[1].name]: Expected typeof string. Received 123."
                 );
             });
 
@@ -635,7 +617,7 @@ describe("Prudence Validators", () => {
                         arraySchemaObject
                     ),
                     "to be",
-                    "[groupchats.0.members.2]: Expected an integer."
+                    "[groupchats[0].members[2]]: Expected an integer. Received 17.4."
                 );
             });
         });
