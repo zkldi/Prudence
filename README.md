@@ -2,6 +2,10 @@
 
 The simple JS object validator.
 
+## Documentation
+
+Read the documentation [here](https://prudence.readthedocs.io).
+
 ## Motivation
 
 Validating non-primitive input is a pain, and I found myself rewriting input validation a
@@ -20,7 +24,7 @@ Prudence also only two options for validation, a typeof check or a provided func
 - Primarily uses functions, which means you do not have to make pull requests for features, you can just write them
 yourself.
 
-- Schema is the exact same structure as the object, no wildcarding workarounds or weird execptions.
+- Schema is the exact same structure as the object, no wildcarding workarounds or weird exceptional use cases.
 
 - Automatic high quality error messages.
 
@@ -108,4 +112,4 @@ let schema = {
 ```
 
 There are a decent amount of these static functions, and you can see more of
-them in the docs (todo).
+them in the [documentation](https://prudence.readthedocs.io).
