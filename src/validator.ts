@@ -241,22 +241,19 @@ function ValidateObject(
         }
     }
 
-    let objKeys = Object.keys(object);
-    let schemaKeys = Object.keys(schema);
+    let invalidObjKeys: Array<string> = [];
 
-    if (
-        objKeys.length !== schemaKeys.length &&
-        !options.allowExcessKeys &&
-        typeof schema !== "function"
-    ) {
-        let invalidObjKeys: Array<string> = [];
-
-        for (const key of objKeys) {
-            if (!schemaKeys.includes(key)) {
-                invalidObjKeys.push(key);
-            }
+    for (const key in object) {
+        if (Object.prototype.hasOwnProperty.call(object, key)) {
+            continue;
         }
 
+        if (!schema[key]) {
+            invalidObjKeys.push(key);
+        }
+    }
+
+    if (invalidObjKeys.length > 0) {
         let stringifiedKeyChain = StringifyKeyChain(keyChain);
 
         return `[${stringifiedKeyChain}]: These keys were not expected inside this object: ${invalidObjKeys.join(
