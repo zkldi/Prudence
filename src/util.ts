@@ -60,7 +60,7 @@ export function Middleware(
         if (req.method === "GET") {
             err = Prudence(req.query, schema, errorMessages, options);
         } else {
-            err = Prudence(req.query, schema, errorMessages, options);
+            err = Prudence(req.body, schema, errorMessages, options);
         }
 
         if (!err) {

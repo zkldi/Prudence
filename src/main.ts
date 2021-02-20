@@ -1,6 +1,6 @@
 import { Validator, ValidateMain } from "./validator";
 import PrudenceStatic from "./static";
-import { CreateFn } from "./util";
+import * as PrudenceUtil from "./util";
 import { PrudenceSchema, ErrorMessages, PrudenceOptions, PrudenceReturn } from "./types";
 
 interface APIFunctionSelf {
@@ -14,7 +14,9 @@ interface APIFunctionSelf {
 
 type PrudenceStatic = typeof PrudenceStatic;
 
-interface PrudenceAPIStatic extends PrudenceStatic {
+type PrudenceUtil = typeof PrudenceUtil;
+
+interface PrudenceAPIStatic extends PrudenceStatic, PrudenceUtil {
     // Todo: understand why/how this works?
     Validator: typeof Validator;
 }
@@ -25,7 +27,7 @@ const FunctionAPI: APIFunctionSelf = ValidateMain;
 
 const StaticAPI = {
     Validator,
-    CreateFn,
+    ...PrudenceUtil,
     ...PrudenceStatic,
 };
 
