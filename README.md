@@ -28,6 +28,8 @@ yourself.
 
 - Automatic high quality error messages.
 
+- Wrote in TypeScript (tests are in JS).
+
 ## Importing
 ```
 npm i prudence
