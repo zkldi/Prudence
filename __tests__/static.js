@@ -1,7 +1,7 @@
 const { describe, it } = require("mocha");
 const expect = require("unexpected");
 const Prudence = require("../js/main").default;
-const { TryNonInts, TryNonFloats } = require("./utils");
+const { TryNonInts, TryNonFloats, TryNonStrings } = require("./utils");
 
 describe("Static Prudence Methods", () => {
     describe("#gt", () => {
@@ -375,5 +375,60 @@ describe("Static Prudence Methods", () => {
         it("Should also work with array construction", () => {
             expect(inFnArr("plum"), "to be true");
         });
+    });
+
+    describe("#isBoundedString", () => {
+        it("Should return a function", () => {
+            expect(Prudence.isBoundedString(1, 5), "to be a function");
+        });
+
+        let boundStr = Prudence.isBoundedString(1, 5);
+
+        it("Should validate strings within the boundaries", () => {
+            expect(boundStr("foo"), "to be true");
+        });
+
+        it("Should validate strings equal to the lower bound", () => {
+            expect(boundStr("f"), "to be true");
+        });
+
+        it("Should validate strings equal to the upper bound", () => {
+            expect(boundStr("hello"), "to be true");
+        });
+
+        it("Should invalidate strings greater than the upper bound", () => {
+            expect(boundStr("foobar"), "to be false");
+        });
+
+        it("Should invalidate strings less than the lower bound", () => {
+            expect(boundStr(""), "to be false");
+        });
+
+        TryNonStrings(boundStr);
+    });
+
+    describe("#regex", () => {
+        it("Should return a function", () => {
+            expect(Prudence.regex(/^foo/), "to be a function");
+        });
+
+        let rx = Prudence.regex(/^foo/);
+
+        it("Should validate strings that match the regex", () => {
+            expect(rx("fooooon"), "to be true");
+        });
+
+        it("Should invalidate strings that do not match the regex", () => {
+            expect(rx("fon"), "to be false");
+        });
+
+        it("Should also work for new Regexp", () => {
+            let rxp = Prudence.regex(new RegExp("^foo"));
+
+            expect(rxp("foooon"), "to be true");
+            expect(rxp("fon"), "to be false");
+        });
+
+        TryNonStrings(rx);
     });
 });
