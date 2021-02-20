@@ -5,7 +5,7 @@
     "main": "js/main.js",
     "scripts": {
         "test": "tsc && nyc mocha",
-        "lint": "eslint ./src --ext .ts && eslint ./test --ext .js",
+        "lint": "eslint ./src --ext .ts && eslint ./__tests__ --ext .js",
         "build": "tsc"
     },
     "nyc": {
