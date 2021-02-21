@@ -177,17 +177,23 @@ function isIn(...values: unknown[]): ValidationFunction {
  * @param lower The lower bound for the length. Inclusive.
  * @param upper The upper bound for the length. Inclusive.
  */
-function isBoundedString(lower: number, upper: number) {
-    return (self: unknown): boolean =>
-        typeof self === "string" && self.length >= lower && self.length <= upper;
+function isBoundedString(lower: number, upper: number): ValidationFunction {
+    return CreateFn(
+        (self: unknown): boolean =>
+            typeof self === "string" && self.length >= lower && self.length <= upper,
+        `Expected a string with length between ${lower} and ${upper}.`
+    );
 }
 
 /**
  * Checks whether a value is a string that matches the given regex.
  * @param regex The regex to match.
  */
-function regex(regex: RegExp) {
-    return (self: unknown): boolean => typeof self === "string" && regex.test(self);
+function regex(regex: RegExp): ValidationFunction {
+    return CreateFn(
+        (self: unknown): boolean => typeof self === "string" && regex.test(self),
+        `Expected string to match ${regex.toString()}`
+    );
 }
 
 const PrudenceStatic = {
