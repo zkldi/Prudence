@@ -2,6 +2,9 @@
 
 The simple JS object validator.
 
+**Prudence is currently heavily in development, and should not be used in any serious production
+environment.**
+
 ## Documentation
 
 Read the documentation [here](https://prudence.readthedocs.io).
