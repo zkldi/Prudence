@@ -285,10 +285,10 @@ function CreateErrorMessage(
 ): string {
     if (typeof errorMessage === "string") {
         if (errorMessage.endsWith(".")) {
-            return `[${stringifiedKeyChain}]: ${errorMessage} Received ${(objectVal as string).toString()}.`;
+            return `[${stringifiedKeyChain}]: ${errorMessage} Received ${objectVal}.`;
         }
 
-        return `[${stringifiedKeyChain}]: ${errorMessage}. Received ${(objectVal as string).toString()}.`;
+        return `[${stringifiedKeyChain}]: ${errorMessage}. Received ${objectVal}.`;
     }
 
     throw new Error(
@@ -369,7 +369,7 @@ function GetErrorMessage(
             return CreateErrorMessage(schemaVal.errorMessage, objectVal, stringifiedKeyChain);
         }
 
-        return `[${stringifiedKeyChain}]: The value ${(objectVal as string).toString()} was invalid, but no error message is available.`;
+        return `[${stringifiedKeyChain}]: The value ${objectVal} was invalid, but no error message is available.`;
     }
 
     if (typeof schemaVal === "string") {
@@ -390,9 +390,7 @@ function GetErrorMessage(
 
     // failsafe: realistically this will always be caught previously in
     // ValidateValue.
-    throw new Error(
-        `[Prudence] Invalid schema value ${(schemaVal as string).toString()} at ${stringifiedKeyChain}.`
-    );
+    throw new Error(`[Prudence] Invalid schema value ${schemaVal} at ${stringifiedKeyChain}.`);
 }
 
 /**
