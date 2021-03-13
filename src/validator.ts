@@ -4,7 +4,7 @@ import {
     PrudenceSchema,
     PrudenceReturn,
     ErrorMessages,
-    ValidationFunctionWithErrorMsg,
+    ValidationFunctionErr,
 } from "./types";
 
 /**
@@ -268,8 +268,8 @@ function ValidateObject(
  * Determines if a function has an attached errorMessage.
  * @param fn The function to check.
  */
-function FunctionHasErrorMsg(fn: unknown): fn is ValidationFunctionWithErrorMsg {
-    return typeof fn === "function" && !!(fn as ValidationFunctionWithErrorMsg).errorMessage;
+function FunctionHasErrorMsg(fn: unknown): fn is ValidationFunctionErr {
+    return typeof fn === "function" && !!(fn as ValidationFunctionErr).errorMessage;
 }
 
 /**

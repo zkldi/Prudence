@@ -10,7 +10,7 @@ import {
     PrudenceReturn,
     PrudenceSchema,
     ValidationFunction,
-    ValidationFunctionWithErrorMsg,
+    ValidationFunctionErr,
 } from "./types";
 
 /**
@@ -19,8 +19,8 @@ import {
  * @param fn
  * @param errHandler
  */
-export function CreateFn(fn: ValidationFunction, errMsg: string): ValidationFunctionWithErrorMsg {
-    let validationFn = fn as ValidationFunctionWithErrorMsg;
+export function CreateFn(fn: ValidationFunction, errMsg: string): ValidationFunction {
+    let validationFn = fn as ValidationFunctionErr;
     validationFn.errorMessage = errMsg;
     return validationFn;
 }

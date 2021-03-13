@@ -66,6 +66,8 @@ interface ValidationFunctionParentErr {
     errorMessage: string;
 }
 
+export type ValidationFunctionErr = ValidationFunctionSelfErr | ValidationFunctionParentErr;
+
 export type ValidationFunction =
     | ValidationFunctionSelf
     | ValidationFunctionParent
