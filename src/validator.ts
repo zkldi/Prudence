@@ -16,7 +16,7 @@ import {
 function ValidateValue(
     value: unknown,
     schemaValue: ValidSchemaValue,
-    parent: Record<string, unknown> | unknown[]
+    parent: Record<string, unknown>
 ): boolean {
     if (typeof schemaValue === "string") {
         // if the string starts with ?*, the schema creator probably made a mistake.
@@ -194,7 +194,7 @@ function ValidateObject(
                     let arrayValid = ValidateValue(
                         element,
                         arraySchema as ValidSchemaValue,
-                        objectVal
+                        object
                     );
 
                     if (!arrayValid) {

@@ -49,7 +49,7 @@ export type PrudenceSchema = {
 export type ValidSchemaValue = ValidationFunction | string | [ValidationFunction] | [string];
 
 export interface ValidationFunction {
-    (self: unknown, parent?: Record<string, unknown> | unknown[]): boolean;
+    (self: unknown, parent?: Record<string, unknown>): boolean;
 }
 
 export interface ValidationFunctionWithErrorMsg extends ValidationFunction {
