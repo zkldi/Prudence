@@ -34,3 +34,5 @@ const StaticAPI = {
 const Prudence: PrudenceAPI = Object.assign(FunctionAPI, StaticAPI);
 
 export default Prudence;
+
+export * from "./types";
