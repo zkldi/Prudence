@@ -44,7 +44,7 @@ export type ErrorMessages = { [prop: string]: string | ErrorMessages };
 
 export type PrudenceSchema = { [prop: string]: ValidSchemaValue | PrudenceSchema };
 
-export type ValidSchemaValue = ValidationFunction | string;
+export type ValidSchemaValue = ValidationFunction | string | [ValidationFunction] | [string];
 
 export interface ValidationFunction {
     (self: unknown, parent?: Record<string, unknown> | unknown[]): boolean;
