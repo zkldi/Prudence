@@ -10,19 +10,28 @@ import {
     PrudenceReturn,
     PrudenceSchema,
     ValidationFunction,
-    ValidationFunctionErr,
 } from "./types";
 
 /**
- * Prudence allows functions to attach the "errorHandler" property, which will be used to
- * format error messages should user input not match the given format.
+ * Attaches an error message to the function by returning the second argument on false.
+ * This is syntactic sugar for a validation function that returns a string.
  * @param fn
- * @param errHandler
+ * @param errMessage
  */
-export function CreateFn(fn: ValidationFunction, errMsg: string): ValidationFunction {
-    let validationFn = fn as ValidationFunctionErr;
-    validationFn.errorMessage = errMsg;
-    return validationFn;
+export function AttachErrMsg(fn: ValidationFunction, errMsg: string): ValidationFunction {
+    return (self: unknown, parent?: Record<string, unknown>) => {
+        let result = fn(self, parent);
+
+        if (typeof result === "string") {
+            return result;
+        }
+
+        if (result === false) {
+            return errMsg;
+        }
+
+        return true;
+    };
 }
 
 /**

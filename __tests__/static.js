@@ -14,11 +14,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow numbers < argument", () => {
-            expect(Prudence.gt(1)(0), "to be false");
+            expect(Prudence.gt(1)(0), "to be", `Expected number to be greater than 1.`);
         });
 
         it("Should reject equal values", () => {
-            expect(Prudence.gt(1)(1), "to be false");
+            expect(Prudence.gt(1)(1), "to be", `Expected number to be greater than 1.`);
         });
 
         it("Should allow floats", () => {
@@ -38,7 +38,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow numbers < argument", () => {
-            expect(Prudence.gte(1)(0), "to be false");
+            expect(
+                Prudence.gte(1)(0),
+                "to be",
+                `Expected number to be greater than or equal to 1.`
+            );
         });
 
         it("Should allow equal values", () => {
@@ -62,11 +66,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow numbers > argument", () => {
-            expect(Prudence.lt(1)(5), "to be false");
+            expect(Prudence.lt(1)(5), "to be", `Expected number to be less than 1.`);
         });
 
         it("Should reject equal values", () => {
-            expect(Prudence.lt(1)(1), "to be false");
+            expect(Prudence.lt(1)(1), "to be", `Expected number to be less than 1.`);
         });
 
         it("Should allow floats less than the value", () => {
@@ -74,7 +78,7 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow floats greater than the value", () => {
-            expect(Prudence.lt(1)(1.01), "to be false");
+            expect(Prudence.lt(1)(1.01), "to be", `Expected number to be less than 1.`);
         });
         TryNonFloats(Prudence.lt(0));
     });
@@ -85,7 +89,7 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should determine whether a number is <= the argument", () => {
-            expect(Prudence.lte(1)(5), "to be false");
+            expect(Prudence.lte(1)(5), "to be", `Expected number to be less than or equal to 1.`);
             expect(Prudence.lte(1)(0), "to be true");
         });
 
@@ -98,7 +102,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow floats greater than the value", () => {
-            expect(Prudence.lte(1)(1.01), "to be false");
+            expect(
+                Prudence.lte(1)(1.01),
+                "to be",
+                `Expected number to be less than or equal to 1.`
+            );
         });
 
         TryNonFloats(Prudence.lte(0));
@@ -114,19 +122,35 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow numbers < argument", () => {
-            expect(Prudence.gtInt(1)(0), "to be false");
+            expect(
+                Prudence.gtInt(1)(0),
+                "to be",
+                "Expected number to be an integer and greater than 1."
+            );
         });
 
         it("Should reject equal values", () => {
-            expect(Prudence.gtInt(1)(1), "to be false");
+            expect(
+                Prudence.gtInt(1)(1),
+                "to be",
+                "Expected number to be an integer and greater than 1."
+            );
         });
 
         it("Should disallow floats less than the value", () => {
-            expect(Prudence.gtInt(1)(0.99), "to be false");
+            expect(
+                Prudence.gtInt(1)(0.99),
+                "to be",
+                "Expected number to be an integer and greater than 1."
+            );
         });
 
         it("Should disallow floats greater than the value", () => {
-            expect(Prudence.gtInt(1)(1.01), "to be false");
+            expect(
+                Prudence.gtInt(1)(1.01),
+                "to be",
+                "Expected number to be an integer and greater than 1."
+            );
         });
 
         TryNonFloats(Prudence.gtInt(0));
@@ -142,7 +166,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow numbers < argument", () => {
-            expect(Prudence.gteInt(1)(0), "to be false");
+            expect(
+                Prudence.gteInt(1)(0),
+                "to be",
+                "Expected number to be an integer and greater than or equal to 1."
+            );
         });
 
         it("Should allow equal values", () => {
@@ -150,11 +178,19 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow floats less than the value", () => {
-            expect(Prudence.gteInt(1)(0.99), "to be false");
+            expect(
+                Prudence.gteInt(1)(0.99),
+                "to be",
+                "Expected number to be an integer and greater than or equal to 1."
+            );
         });
 
         it("Should disallow floats greater than the value", () => {
-            expect(Prudence.gteInt(1)(1.01), "to be false");
+            expect(
+                Prudence.gteInt(1)(1.01),
+                "to be",
+                "Expected number to be an integer and greater than or equal to 1."
+            );
         });
 
         TryNonFloats(Prudence.gteInt(0));
@@ -170,19 +206,35 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow numbers > argument", () => {
-            expect(Prudence.ltInt(1)(5), "to be false");
+            expect(
+                Prudence.ltInt(1)(5),
+                "to be",
+                "Expected number to be an integer and less than 1."
+            );
         });
 
         it("Should reject equal values", () => {
-            expect(Prudence.ltInt(1)(1), "to be false");
+            expect(
+                Prudence.ltInt(1)(1),
+                "to be",
+                "Expected number to be an integer and less than 1."
+            );
         });
 
         it("Should disallow floats less than the value", () => {
-            expect(Prudence.ltInt(1)(0.99), "to be false");
+            expect(
+                Prudence.ltInt(1)(0.99),
+                "to be",
+                "Expected number to be an integer and less than 1."
+            );
         });
 
         it("Should disallow floats greater than the value", () => {
-            expect(Prudence.ltInt(1)(1.01), "to be false");
+            expect(
+                Prudence.ltInt(1)(1.01),
+                "to be",
+                "Expected number to be an integer and less than 1."
+            );
         });
 
         TryNonFloats(Prudence.ltInt(0));
@@ -194,7 +246,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should determine whether a number is <= the argument", () => {
-            expect(Prudence.lteInt(1)(5), "to be false");
+            expect(
+                Prudence.lteInt(1)(5),
+                "to be",
+                "Expected number to be an integer and less than or equal to 1."
+            );
             expect(Prudence.lteInt(1)(0), "to be true");
         });
 
@@ -203,11 +259,19 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow floats less than the value", () => {
-            expect(Prudence.lteInt(1)(0.99), "to be false");
+            expect(
+                Prudence.lteInt(1)(0.99),
+                "to be",
+                "Expected number to be an integer and less than or equal to 1."
+            );
         });
 
         it("Should disallow floats greater than the value", () => {
-            expect(Prudence.lteInt(1)(1.01), "to be false");
+            expect(
+                Prudence.lteInt(1)(1.01),
+                "to be",
+                "Expected number to be an integer and less than or equal to 1."
+            );
         });
 
         TryNonFloats(Prudence.lteInt(0));
@@ -222,12 +286,16 @@ describe("Static Prudence Methods", () => {
             expect(Prudence.isPositiveInteger(0), "to be true");
         });
 
-        it("Should return false for ints larger than safe values", () => {
-            expect(Prudence.isPositiveInteger(Number.MAX_SAFE_INTEGER + 1), "to be false");
+        it("Should return error for ints larger than safe values", () => {
+            expect(
+                Prudence.isPositiveInteger(Number.MAX_SAFE_INTEGER + 1),
+                "to be",
+                "Expected a positive integer."
+            );
         });
 
-        it("Should return false for ints less than 0", () => {
-            expect(Prudence.isPositiveInteger(-1), "to be false");
+        it("Should return error for ints less than 0", () => {
+            expect(Prudence.isPositiveInteger(-1), "to be", "Expected a positive integer.");
         });
 
         TryNonInts(Prudence.isPositiveInteger);
@@ -239,15 +307,27 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should return false for 0", () => {
-            expect(Prudence.isPositiveNonZeroInteger(0), "to be false");
+            expect(
+                Prudence.isPositiveNonZeroInteger(0),
+                "to be",
+                "Expected a positive non-zero integer."
+            );
         });
 
         it("Should return false for ints larger than safe values", () => {
-            expect(Prudence.isPositiveNonZeroInteger(Number.MAX_SAFE_INTEGER + 1), "to be false");
+            expect(
+                Prudence.isPositiveNonZeroInteger(Number.MAX_SAFE_INTEGER + 1),
+                "to be",
+                "Expected a positive non-zero integer."
+            );
         });
 
         it("Should return false for ints less than 0", () => {
-            expect(Prudence.isPositiveNonZeroInteger(-1), "to be false");
+            expect(
+                Prudence.isPositiveNonZeroInteger(-1),
+                "to be",
+                "Expected a positive non-zero integer."
+            );
         });
 
         TryNonInts(Prudence.isPositiveNonZeroInteger);
@@ -273,11 +353,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow 100 between 0 and 10.", () => {
-            expect(boundFn(100), "to be false");
+            expect(boundFn(100), "to be", `Expected an integer between 0 and 10.`);
         });
 
         it("Should disallow Infinity between 0 and 10.", () => {
-            expect(boundFn(Infinity), "to be false");
+            expect(boundFn(Infinity), "to be", `Expected an integer between 0 and 10.`);
         });
 
         it("Should allow -0 between 0 and 10.", () => {
@@ -285,15 +365,15 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow -100 between 0 and 10.", () => {
-            expect(boundFn(-100), "to be false");
+            expect(boundFn(-100), "to be", `Expected an integer between 0 and 10.`);
         });
 
         it("Should disallow -Infinity between 0 and 10.", () => {
-            expect(boundFn(-Infinity), "to be false");
+            expect(boundFn(-Infinity), "to be", `Expected an integer between 0 and 10.`);
         });
 
         it("Should disallow 5.5 between 0 and 10.", () => {
-            expect(boundFn(5.5), "to be false");
+            expect(boundFn(5.5), "to be", `Expected an integer between 0 and 10.`);
         });
 
         TryNonInts(boundFn);
@@ -309,7 +389,7 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow Infinity", () => {
-            expect(Prudence.isPositive(Infinity), "to be false");
+            expect(Prudence.isPositive(Infinity), "to be", "Expected a positive number.");
         });
 
         it("Should allow 0", () => {
@@ -317,11 +397,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow negative integers", () => {
-            expect(Prudence.isPositive(-1), "to be false");
+            expect(Prudence.isPositive(-1), "to be", "Expected a positive number.");
         });
 
         it("Should disallow negative floats", () => {
-            expect(Prudence.isPositive(-1.5), "to be false");
+            expect(Prudence.isPositive(-1.5), "to be", "Expected a positive number.");
         });
 
         TryNonFloats(Prudence.isPositive);
@@ -337,19 +417,27 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow Infinity", () => {
-            expect(Prudence.isPositiveNonZero(Infinity), "to be false");
+            expect(
+                Prudence.isPositiveNonZero(Infinity),
+                "to be",
+                "Expected a positive non-zero number."
+            );
         });
 
         it("Should disallow 0", () => {
-            expect(Prudence.isPositiveNonZero(0), "to be false");
+            expect(Prudence.isPositiveNonZero(0), "to be", "Expected a positive non-zero number.");
         });
 
         it("Should disallow negative integers", () => {
-            expect(Prudence.isPositive(-1), "to be false");
+            expect(Prudence.isPositiveNonZero(-1), "to be", "Expected a positive non-zero number.");
         });
 
         it("Should disallow negative floats", () => {
-            expect(Prudence.isPositive(-1.5), "to be false");
+            expect(
+                Prudence.isPositiveNonZero(-1.5),
+                "to be",
+                "Expected a positive non-zero number."
+            );
         });
 
         TryNonFloats(Prudence.isPositiveNonZero);
@@ -367,7 +455,7 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should disallow input not inside the array", () => {
-            expect(inFn("banana"), "to be false");
+            expect(inFn("banana"), "to be", "Expected any of plum, apple, peach.");
         });
 
         let inFnArr = Prudence.isIn(["plum", "apple", "peach"]);
@@ -397,11 +485,11 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should invalidate strings greater than the upper bound", () => {
-            expect(boundStr("foobar"), "to be false");
+            expect(boundStr("foobar"), "to be", `Expected a string with length between 1 and 5.`);
         });
 
         it("Should invalidate strings less than the lower bound", () => {
-            expect(boundStr(""), "to be false");
+            expect(boundStr(""), "to be", `Expected a string with length between 1 and 5.`);
         });
 
         TryNonStrings(boundStr);
@@ -419,14 +507,14 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should invalidate strings that do not match the regex", () => {
-            expect(rx("fon"), "to be false");
+            expect(rx("fon"), "to be", "Expected string to match /^foo/");
         });
 
         it("Should also work for new Regexp", () => {
             let rxp = Prudence.regex(new RegExp("^foo"));
 
             expect(rxp("foooon"), "to be true");
-            expect(rxp("fon"), "to be false");
+            expect(rxp("fon"), "to be", "Expected string to match /^foo/");
         });
 
         TryNonStrings(rx);

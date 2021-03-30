@@ -1,11 +1,11 @@
 import { ValidationFunction } from "./types";
-import { CreateFn } from "./util";
+import { AttachErrMsg } from "./util";
 
 /**
  * Alias for Number.isSafeInteger.
  * @returns {ValidationFunction}
  */
-const isInteger = CreateFn(
+const isInteger = AttachErrMsg(
     (self: unknown): boolean => Number.isSafeInteger(self),
     "Expected an integer."
 );
@@ -18,7 +18,7 @@ const isInteger = CreateFn(
  * @returns {ValidationFunction}
  */
 const gt = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) > number,
         `Expected number to be greater than ${number}.`
     );
@@ -31,7 +31,7 @@ const gt = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const gte = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) >= number,
         `Expected number to be greater than or equal to ${number}.`
     );
@@ -44,9 +44,9 @@ const gte = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const lt = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) < number,
-        `Expected number to be greater than ${number}.`
+        `Expected number to be less than ${number}.`
     );
 
 /**
@@ -57,7 +57,7 @@ const lt = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const lte = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isFinite(self) && (self as number) <= number,
         `Expected number to be less than or equal to ${number}.`
     );
@@ -70,9 +70,9 @@ const lte = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const gtInt = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > number,
-        `Expected number to be greater than ${number}.`
+        `Expected number to be an integer and greater than ${number}.`
     );
 
 /**
@@ -83,9 +83,9 @@ const gtInt = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const gteInt = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= number,
-        `Expected number to be greater than or equal to ${number}.`
+        `Expected number to be an integer and greater than or equal to ${number}.`
     );
 
 /**
@@ -96,9 +96,9 @@ const gteInt = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const ltInt = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) < number,
-        `Expected number to be greater than ${number}.`
+        `Expected number to be an integer and less than ${number}.`
     );
 
 /**
@@ -109,15 +109,15 @@ const ltInt = (number: number): ValidationFunction =>
  * @returns {ValidationFunction}
  */
 const lteInt = (number: number): ValidationFunction =>
-    CreateFn(
+    AttachErrMsg(
         (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) <= number,
-        `Expected number to be less than or equal to ${number}.`
+        `Expected number to be an integer and less than or equal to ${number}.`
     );
 
 /**
  * Determines if a value is a positive integer.
  */
-const isPositiveInteger = CreateFn(
+const isPositiveInteger = AttachErrMsg(
     (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= 0,
     "Expected a positive integer."
 );
@@ -125,7 +125,7 @@ const isPositiveInteger = CreateFn(
 /**
  * Determines if a value is a positive integer and not 0.
  */
-const isPositiveNonZeroInteger = CreateFn(
+const isPositiveNonZeroInteger = AttachErrMsg(
     (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > 0,
     "Expected a positive non-zero integer."
 );
@@ -137,7 +137,7 @@ const isPositiveNonZeroInteger = CreateFn(
  * @param upperBound The upper bound. Inclusive.
  */
 function isBoundedInteger(lowerBound: number, upperBound: number): ValidationFunction {
-    return CreateFn(
+    return AttachErrMsg(
         (self: unknown): boolean =>
             Number.isSafeInteger(self) &&
             (self as number) <= upperBound &&
@@ -149,16 +149,18 @@ function isBoundedInteger(lowerBound: number, upperBound: number): ValidationFun
 /**
  * Determines if a value is a positive number.
  */
-function isPositive(self: unknown): boolean {
-    return Number.isFinite(self) && (self as number) >= 0;
-}
+const isPositive = AttachErrMsg(
+    (self: unknown): boolean => Number.isFinite(self) && (self as number) >= 0,
+    "Expected a positive number."
+);
 
 /**
  * Determines if a value is a positive number and non-zero.
  */
-function isPositiveNonZero(self: unknown): boolean {
-    return Number.isFinite(self) && (self as number) > 0;
-}
+const isPositiveNonZero = AttachErrMsg(
+    (self: unknown): boolean => Number.isFinite(self) && (self as number) > 0,
+    "Expected a positive non-zero number."
+);
 
 /**
  * Takes a list of items and returns a function that checks if a provided value is inside that array.
@@ -169,7 +171,7 @@ function isIn(...values: unknown[]): ValidationFunction {
         values = [...values[0]];
     }
 
-    return (self: unknown): boolean => values.includes(self);
+    return (self: unknown) => values.includes(self) || `Expected any of ${values.join(", ")}.`;
 }
 
 /**
@@ -178,7 +180,7 @@ function isIn(...values: unknown[]): ValidationFunction {
  * @param upper The upper bound for the length. Inclusive.
  */
 function isBoundedString(lower: number, upper: number): ValidationFunction {
-    return CreateFn(
+    return AttachErrMsg(
         (self: unknown): boolean =>
             typeof self === "string" && self.length >= lower && self.length <= upper,
         `Expected a string with length between ${lower} and ${upper}.`
@@ -190,11 +192,44 @@ function isBoundedString(lower: number, upper: number): ValidationFunction {
  * @param regex The regex to match.
  */
 function regex(regex: RegExp): ValidationFunction {
-    return CreateFn(
+    return AttachErrMsg(
         (self: unknown): boolean => typeof self === "string" && regex.test(self),
         `Expected string to match ${regex.toString()}`
     );
 }
+
+function allOf(...validators: ValidationFunction[]): ValidationFunction {
+    return (self: unknown, parent): boolean | string => {
+        for (const v of validators) {
+            let result = v(self, parent);
+
+            if (typeof result === "string") {
+                return result;
+            } else if (result === false) {
+                return result;
+            }
+        }
+
+        return true;
+    };
+}
+
+// I can't think of a nice way to return err msgs for this.
+// function anyOf(...validators: ValidationFunction[]): ValidationFunction {
+//     return (self: unknown, parent): boolean | string => {
+//         for (const v of validators) {
+//             let result = v(self, parent);
+
+//             if (typeof result === "string") {
+//                 return result;
+//             } else if (result === false) {
+//                 return result;
+//             }
+//         }
+
+//         return false;
+//     };
+// }
 
 const PrudenceStatic = {
     isBoundedInteger,
@@ -214,6 +249,7 @@ const PrudenceStatic = {
     lteInt,
     isBoundedString,
     regex,
+    anyOf: allOf,
 };
 
 export default PrudenceStatic;

@@ -1,6 +1,7 @@
 // eslint doesnt like us importing only types, so lets turn that off.
 // eslint-disable-next-line import/no-unresolved
 import { NextFunction, Request, RequestHandler, Response } from "express-serve-static-core";
+import { PrudenceError } from "./error";
 
 export interface PrudenceOptions {
     /**
@@ -13,6 +14,10 @@ export interface PrudenceOptions {
      * Default: true.
      */
     throwOnNonObject: boolean;
+}
+
+export interface ErrMessageFormatter {
+    (msg: string, strKeyChain: string, recieved: unknown): string;
 }
 
 export interface CustomErrorFunction {
@@ -37,7 +42,7 @@ export interface PrudenceMiddlewareGen {
 }
 
 export interface MiddlewareErrorHandler {
-    (req: Request, res: Response, next: NextFunction, errorMessage: string): void;
+    (req: Request, res: Response, next: NextFunction, errorMessage: PrudenceError): void;
 }
 
 export type ErrorMessages = { [prop: string]: string | ErrorMessages };
@@ -48,30 +53,8 @@ export type PrudenceSchema = {
 
 export type ValidSchemaValue = ValidationFunction | string | [ValidationFunction] | [string];
 
-interface ValidationFunctionSelf {
-    (self: unknown): boolean;
+export interface ValidationFunction {
+    (self: unknown, parent?: Record<string, unknown>): boolean | string;
 }
 
-interface ValidationFunctionParent {
-    (self: unknown, parent: Record<string, unknown>): boolean;
-}
-
-interface ValidationFunctionSelfErr {
-    (self: unknown): boolean;
-    errorMessage: string;
-}
-
-interface ValidationFunctionParentErr {
-    (self: unknown, parent: Record<string, unknown>): boolean;
-    errorMessage: string;
-}
-
-export type ValidationFunctionErr = ValidationFunctionSelfErr | ValidationFunctionParentErr;
-
-export type ValidationFunction =
-    | ValidationFunctionSelf
-    | ValidationFunctionParent
-    | ValidationFunctionSelfErr
-    | ValidationFunctionParentErr;
-
-export type PrudenceReturn = null | string;
+export type PrudenceReturn = null | PrudenceError;

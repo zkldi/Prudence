@@ -2,13 +2,7 @@ const { describe, it } = require("mocha");
 const expect = require("unexpected");
 const Prudence = require("../js/main").default;
 
-const {
-    ValidateValue,
-    FunctionHasErrorMsg,
-    CreateErrorMessage,
-    StringifyKeyChain,
-    GetErrorMessage,
-} = require("../js/validator");
+const { ValidateValue, StringifyKeyChain, GetErrorMessage } = require("../js/validator");
 // const { TryNonInts, TryNonFloats } = require("./utils");
 
 describe("Prudence Validators", () => {
@@ -38,7 +32,11 @@ describe("Prudence Validators", () => {
             // under normal circumstances this would throw, instead
             // will return false.
 
-            expect(newValidator.Validate(null, {}), "to be", "Non-object provided for validation.");
+            expect(newValidator.Validate(null, {}), "to exhaustively satisfy", {
+                keychain: null,
+                message: "Non-object provided for validation.",
+                userVal: null,
+            });
         });
     });
 
@@ -155,49 +153,13 @@ describe("Prudence Validators", () => {
         });
     });
 
-    describe("#FunctionHasErrorMsg", () => {
-        it("Should correctly determine if a function has an error message", () => {
-            let fn = () => true;
-            fn.errorMessage = "foo";
-            expect(FunctionHasErrorMsg(fn), "to be true");
-        });
-
-        it("Should reject functions without error messages", () => {
-            let fn = () => true;
-            expect(FunctionHasErrorMsg(fn), "to be false");
-        });
-    });
-
-    describe("#CreateErrorMessage", () => {
-        it("Should return a prefixed/suffixed string if error message is a string", () => {
-            expect(
-                CreateErrorMessage(
-                    "Should be greater than 18.",
-                    17,
-                    "foo",
-                    Prudence.Validator.defaultOptions
-                ),
-                "to be",
-                "[foo]: Should be greater than 18. Received 17."
-            );
-        });
-
-        it("Should throw an error on invalid error message", () => {
-            expect(
-                () => CreateErrorMessage(null, 17, "foo", Prudence.Validator.defaultOptions),
-                "to throw",
-                "[Prudence] Invalid error message of null. Error messages must be strings."
-            );
-        });
-    });
-
     describe("#StringifyKeyChain", () => {
         it("Should stringify a basic key chain", () => {
             expect(StringifyKeyChain(["foo", "bar"]), "to be", "foo.bar");
         });
 
-        it("Should return <root level> for an empty key chain", () => {
-            expect(StringifyKeyChain([]), "to be", "<root level>");
+        it("Should return null for an empty key chain", () => {
+            expect(StringifyKeyChain([]), "to be", null);
         });
 
         it("Should stringify a key chain starting with dots", () => {
@@ -227,25 +189,12 @@ describe("Prudence Validators", () => {
                     Prudence.Validator.defaultOptions,
                     "error message here"
                 ),
-                "to be",
-                "[foo.bar]: error message here. Received foo."
-            );
-        });
-
-        it("Invoked custom error messages should take priority over function error messages", () => {
-            let fn = () => true;
-            fn.errorMessage = "error 2";
-
-            expect(
-                GetErrorMessage(
-                    "foo",
-                    fn,
-                    ["foo", "bar"],
-                    Prudence.Validator.defaultOptions,
-                    "error message here"
-                ),
-                "to be",
-                "[foo.bar]: error message here. Received foo."
+                "to exhaustively satisfy",
+                {
+                    keychain: "foo.bar",
+                    message: "error message here",
+                    userVal: "foo",
+                }
             );
         });
 
@@ -260,24 +209,7 @@ describe("Prudence Validators", () => {
                         { someNestedProperty: "error message" }
                     ),
                 "to throw",
-                "[Prudence] Invalid customError at foo.bar. Expected an error message or undefined, but got an object."
-            );
-        });
-
-        it("Should use provided functions error message if present", () => {
-            let fn = () => true;
-            fn.errorMessage = "error 2";
-
-            expect(
-                GetErrorMessage(
-                    "foo",
-                    fn,
-                    ["foo", "bar"],
-                    Prudence.Validator.defaultOptions,
-                    undefined
-                ),
-                "to be",
-                "[foo.bar]: error 2. Received foo."
+                "[Prudence] Invalid error message at foo.bar. Expected an error message or undefined, but got an object. Does your schema's structure match your error structure?"
             );
         });
 
@@ -292,22 +224,30 @@ describe("Prudence Validators", () => {
                     Prudence.Validator.defaultOptions,
                     undefined
                 ),
-                "to be",
-                "[foo.bar]: The value foo was invalid, but no error message is available."
+                "to exhaustively satisfy",
+                {
+                    keychain: "foo.bar",
+                    message: "Invalid Input, but no error message is available.",
+                    userVal: "foo",
+                }
             );
         });
 
         it("Should use a builtin message for strings", () => {
             expect(
                 GetErrorMessage(
-                    "foo",
+                    123,
                     "string",
                     ["foo", "bar"],
                     Prudence.Validator.defaultOptions,
                     undefined
                 ),
-                "to be",
-                "[foo.bar]: Expected typeof string. Received foo."
+                "to exhaustively satisfy",
+                {
+                    keychain: "foo.bar",
+                    message: "Expected string.",
+                    userVal: 123,
+                }
             );
         });
     });
@@ -346,8 +286,12 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to be",
-                    "[age]: Expected an integer. Received 18.5."
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "age",
+                        message: "Expected an integer.",
+                        userVal: 18.5,
+                    }
                 );
             });
 
@@ -363,8 +307,18 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to be",
-                    `[<root level>]: These keys were not expected inside this object: foo1, foo2.`
+                    "to exhaustively satisfy",
+                    {
+                        keychain: null,
+                        message: "Unexpected properties inside object: foo1, foo2.",
+                        userVal: {
+                            name: "bob",
+                            age: 18,
+                            isAdmin: false,
+                            foo1: 1,
+                            foo2: 2,
+                        },
+                    }
                 );
             });
 
@@ -380,8 +334,14 @@ describe("Prudence Validators", () => {
                         },
                         flatSchema
                     ),
-                    "to be",
-                    `[name]: Expected typeof string. Received [object Object].`
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "name",
+                        message: "Expected string.",
+                        userVal: {
+                            name: "bob",
+                        },
+                    }
                 );
             });
         });
@@ -424,8 +384,12 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to be",
-                    `[permissions.admin]: Expected typeof boolean. Received foo.`
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "permissions.admin",
+                        message: "Expected boolean.",
+                        userVal: "foo",
+                    }
                 );
             });
 
@@ -443,8 +407,16 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to be",
-                    `[permissions]: These keys were not expected inside this object: foo1, foo2.`
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "permissions",
+                        message: "Unexpected properties inside object: foo1, foo2.",
+                        userVal: {
+                            admin: true,
+                            foo1: true,
+                            foo2: true,
+                        },
+                    }
                 );
             });
 
@@ -458,8 +430,13 @@ describe("Prudence Validators", () => {
                         },
                         nestedSchema
                     ),
-                    "to be",
-                    `[permissions]: Object does not match structure of schema, expected this location to have an object.`
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "permissions",
+                        message:
+                            "Object does not match structure of schema, expected this location to have an object.",
+                        userVal: "something",
+                    }
                 );
             });
         });
@@ -496,8 +473,12 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaFn
                     ),
-                    "to be",
-                    "[friends[3]]: Expected an integer. Received 15.5."
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "friends[3]",
+                        message: "Expected an integer.",
+                        userVal: 15.5,
+                    }
                 );
             });
 
@@ -532,8 +513,12 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaLiteral
                     ),
-                    "to be",
-                    "[aliases[1]]: Expected typeof string. Received 123."
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "aliases[1]",
+                        message: "Expected string.",
+                        userVal: 123,
+                    }
                 );
             });
 
@@ -592,8 +577,12 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaObject
                     ),
-                    "to be",
-                    "[groupchats[1].name]: Expected typeof string. Received 123."
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "groupchats[1].name",
+                        message: "Expected string.",
+                        userVal: 123,
+                    }
                 );
             });
 
@@ -616,8 +605,12 @@ describe("Prudence Validators", () => {
                         },
                         arraySchemaObject
                     ),
-                    "to be",
-                    "[groupchats[0].members[2]]: Expected an integer. Received 17.4."
+                    "to exhaustively satisfy",
+                    {
+                        keychain: "groupchats[0].members[2]",
+                        message: "Expected an integer.",
+                        userVal: 17.4,
+                    }
                 );
             });
         });

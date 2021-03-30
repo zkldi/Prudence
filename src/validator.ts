@@ -1,10 +1,10 @@
+import { PrudenceError } from "./error";
 import {
     ValidSchemaValue,
     PrudenceOptions,
     PrudenceSchema,
     PrudenceReturn,
     ErrorMessages,
-    ValidationFunctionErr,
 } from "./types";
 
 /**
@@ -17,7 +17,7 @@ function ValidateValue(
     value: unknown,
     schemaValue: ValidSchemaValue,
     parent: Record<string, unknown>
-): boolean {
+): boolean | string {
     if (typeof schemaValue === "string") {
         // if the string starts with ?*, the schema creator probably made a mistake.
         // warn them as such.
@@ -114,12 +114,22 @@ function ValidateObject(
                 throw new Error(`[Prudence] Non-object ${object} provided.`);
             }
 
-            return `Non-object provided for validation.`;
+            let stringifiedKeyChain = StringifyKeyChain(keyChain);
+
+            return new PrudenceError(
+                `Non-object provided for validation.`,
+                stringifiedKeyChain,
+                object
+            );
         }
 
         let stringifiedKeyChain = StringifyKeyChain(keyChain);
 
-        return `[${stringifiedKeyChain}]: Object does not match structure of schema, expected this location to have an object.`;
+        return new PrudenceError(
+            `Object does not match structure of schema, expected this location to have an object.`,
+            stringifiedKeyChain,
+            object
+        );
     }
 
     // We iterate over the schema's keys and use them to check against the object.
@@ -159,7 +169,11 @@ function ValidateObject(
 
             // the provided object must be an array to match this.
             if (!Array.isArray(objectVal)) {
-                return `[${StringifyKeyChain(currentKeyChain)}]: Value was not an array.`;
+                return new PrudenceError(
+                    "Value was not an array",
+                    StringifyKeyChain(currentKeyChain),
+                    objectVal
+                );
             }
 
             let arraySchema = schemaVal[0];
@@ -197,7 +211,13 @@ function ValidateObject(
                         object
                     );
 
-                    if (!arrayValid) {
+                    if (typeof arrayValid === "string") {
+                        return new PrudenceError(
+                            arrayValid,
+                            StringifyKeyChain([...currentKeyChain, i.toString()]),
+                            element
+                        );
+                    } else if (arrayValid === false) {
                         currentKeyChain.push(i.toString());
 
                         let errorMessage = GetErrorMessage(
@@ -226,18 +246,28 @@ function ValidateObject(
                 // if the recursive check failed, return the failed check to pass the error message up.
                 return recursiveErr;
             }
-        } else if (!ValidateValue(objectVal, schemaVal as ValidSchemaValue, object)) {
-            // If what we hit wasn't an object, we can just compare what the schema expects against the object.
+        } else {
+            let validateResult = ValidateValue(objectVal, schemaVal as ValidSchemaValue, object);
 
-            let errorMessage = GetErrorMessage(
-                objectVal,
-                schemaVal,
-                currentKeyChain,
-                options,
-                errorMessageVal
-            );
+            if (validateResult === false) {
+                // If what we hit wasn't an object, we can just compare what the schema expects against the object.
 
-            return errorMessage;
+                let errorMessage = GetErrorMessage(
+                    objectVal,
+                    schemaVal,
+                    currentKeyChain,
+                    options,
+                    errorMessageVal
+                );
+
+                return errorMessage;
+            } else if (typeof validateResult === "string") {
+                return new PrudenceError(
+                    validateResult,
+                    StringifyKeyChain(currentKeyChain),
+                    objectVal
+                );
+            }
         }
     }
 
@@ -256,53 +286,23 @@ function ValidateObject(
     if (invalidObjKeys.length > 0) {
         let stringifiedKeyChain = StringifyKeyChain(keyChain);
 
-        return `[${stringifiedKeyChain}]: These keys were not expected inside this object: ${invalidObjKeys.join(
-            ", "
-        )}.`;
+        return new PrudenceError(
+            `Unexpected properties inside object: ${invalidObjKeys.join(", ")}.`,
+            stringifiedKeyChain,
+            object
+        );
     }
 
     return null;
 }
 
 /**
- * Determines if a function has an attached errorMessage.
- * @param fn The function to check.
- */
-function FunctionHasErrorMsg(fn: unknown): fn is ValidationFunctionErr {
-    return typeof fn === "function" && !!(fn as ValidationFunctionErr).errorMessage;
-}
-
-/**
- * Creates an error message.
- * @param errorMessage The error message to use.
- * @param objectVal The value we received.
- * @param stringifiedKeyChain Where the above value was sourced from as a single string.
- */
-function CreateErrorMessage(
-    errorMessage: string,
-    objectVal: unknown,
-    stringifiedKeyChain: string
-): string {
-    if (typeof errorMessage === "string") {
-        if (errorMessage.endsWith(".")) {
-            return `[${stringifiedKeyChain}]: ${errorMessage} Received ${objectVal}.`;
-        }
-
-        return `[${stringifiedKeyChain}]: ${errorMessage}. Received ${objectVal}.`;
-    }
-
-    throw new Error(
-        `[Prudence] Invalid error message of ${errorMessage}. Error messages must be strings.`
-    );
-}
-
-/**
  * Converts a keyChain array into a javascript-like single string.
  * @param keyChain The keychain to stringify.
  */
-function StringifyKeyChain(keyChain: string[]): string {
+function StringifyKeyChain(keyChain: string[]): string | null {
     if (keyChain.length === 0) {
-        return "<root level>";
+        return null;
     }
 
     let str = keyChain[0];
@@ -344,48 +344,61 @@ function GetErrorMessage(
     keyChain: string[],
     options: PrudenceOptions,
     customErrorMessage?: ErrorMessages | string
-): string {
+): PrudenceError {
     let stringifiedKeyChain = StringifyKeyChain(keyChain);
 
     // If the consumer passes a malformed set of error messages, it's possible we might get
     // an object here instead of an error message.
-    if (typeof customErrorMessage === "object") {
+    if (typeof customErrorMessage !== "string" && customErrorMessage !== undefined) {
         throw new Error(
-            `[Prudence] Invalid customError at ${stringifiedKeyChain}. Expected an error message or undefined, but got an object.`
+            `[Prudence] Invalid error message at ${stringifiedKeyChain}. Expected an error message or undefined, but got an object. Does your schema's structure match your error structure?`
         );
     }
 
     // First check:
     // Check if an attached custom error message was sent.
     if (customErrorMessage) {
-        return CreateErrorMessage(customErrorMessage, objectVal, stringifiedKeyChain);
+        return new PrudenceError(customErrorMessage, stringifiedKeyChain, objectVal);
     }
 
     // Second check:
     // If we don't have a custom error message, check if the schema value was a function.
-    // Functions are allowed to attach error messages.
+    // There's no good way for us to display an error message from a function,
+    // so just display a fallback.
     if (typeof schemaVal === "function") {
-        if (FunctionHasErrorMsg(schemaVal)) {
-            return CreateErrorMessage(schemaVal.errorMessage, objectVal, stringifiedKeyChain);
-        }
-
-        return `[${stringifiedKeyChain}]: The value ${objectVal} was invalid, but no error message is available.`;
+        return new PrudenceError(
+            "Invalid Input, but no error message is available.",
+            stringifiedKeyChain,
+            objectVal
+        );
     }
 
     if (typeof schemaVal === "string") {
         if (schemaVal.startsWith("*?")) {
-            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal}, null or no value.`;
+            return new PrudenceError(
+                `Expected ${schemaVal}, null or no value.`,
+                stringifiedKeyChain,
+                objectVal
+            );
         }
 
         if (schemaVal.startsWith("*")) {
-            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal} or no value. Received ${objectVal}.`;
+            return new PrudenceError(
+                `Expected ${schemaVal} or no value.`,
+                stringifiedKeyChain,
+                objectVal
+            );
         }
 
         if (schemaVal.startsWith("?")) {
-            return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal} or null. Received ${objectVal}.`;
+            return new PrudenceError(
+                `Expected ${schemaVal} or null.`,
+                stringifiedKeyChain,
+                objectVal
+            );
         }
 
-        return `[${stringifiedKeyChain}]: Expected typeof ${schemaVal}. Received ${objectVal}.`;
+        return new PrudenceError(`Expected ${schemaVal}.`, stringifiedKeyChain, objectVal);
     }
 
     // failsafe: realistically this will always be caught previously in
@@ -453,7 +466,5 @@ export {
     ValidateValue,
     GetErrorMessage,
     StringifyKeyChain,
-    CreateErrorMessage,
-    FunctionHasErrorMsg,
     ValidateObject,
 };
