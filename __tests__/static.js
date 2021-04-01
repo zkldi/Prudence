@@ -519,4 +519,33 @@ describe("Static Prudence Methods", () => {
 
         TryNonStrings(rx);
     });
+
+    describe("#allOf", () => {
+        it("Should return a function", () => {
+            expect(
+                Prudence.allOf(
+                    () => true,
+                    () => false
+                ),
+                "to be a function"
+            );
+        });
+
+        it("Should fail if not all functions pass", () => {
+            const badFn = Prudence.allOf(
+                () => true,
+                () => false
+            );
+            expect(Prudence({ foo: 1 }, { foo: badFn }), "not to be null");
+        });
+
+        it("Should pass if all functions pass", () => {
+            const badFn = Prudence.allOf(
+                () => true,
+                () => true,
+                () => true
+            );
+            expect(Prudence({ foo: 1 }, { foo: badFn }), "to be null");
+        });
+    });
 });

@@ -30,6 +30,7 @@
         "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/no-extra-semi": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "no-unused-labels": "error",
         "no-console": "error",
         "prefer-const": "off",

@@ -214,6 +214,25 @@ function allOf(...validators: ValidationFunction[]): ValidationFunction {
     };
 }
 
+function is(value: unknown) {
+    return (self: unknown) => Object.is(self, value);
+}
+
+function isNot(value: unknown) {
+    return (self: unknown) => !Object.is(self, value);
+}
+
+function equalTo(value: unknown) {
+    return (self: unknown) => self === value;
+}
+
+function notEqualTo(value: unknown) {
+    return (self: unknown) => self !== value;
+}
+
+// no op
+const any = () => true;
+
 // I can't think of a nice way to return err msgs for this.
 // function anyOf(...validators: ValidationFunction[]): ValidationFunction {
 //     return (self: unknown, parent): boolean | string => {
@@ -249,7 +268,12 @@ const PrudenceStatic = {
     lteInt,
     isBoundedString,
     regex,
-    anyOf: allOf,
+    allOf,
+    is,
+    isNot,
+    equalTo,
+    notEqualTo,
+    any,
 };
 
 export default PrudenceStatic;
