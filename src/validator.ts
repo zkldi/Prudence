@@ -417,7 +417,7 @@ function GetErrorMessage(
  * @param options Custom options for the validation.
  */
 function ValidateMain(
-    object: Record<string, unknown>,
+    object: Record<string, unknown> | unknown,
     schema: PrudenceSchema,
     errorMessages: ErrorMessages = {},
     options: PrudenceOptions = Validator.defaultOptions
