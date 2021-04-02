@@ -614,5 +614,25 @@ describe("Prudence Validators", () => {
                 );
             });
         });
+
+        describe("Error Messages", () => {
+            it("Custom error messages should take priority over function error messages.", () => {
+                expect(
+                    Prudence(
+                        {
+                            foo: 123,
+                        },
+                        {
+                            foo: () => "fn err msg",
+                        },
+                        {
+                            foo: "override error message",
+                        }
+                    ).message,
+                    "to be",
+                    "override error message"
+                );
+            });
+        });
     });
 });
