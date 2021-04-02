@@ -6,7 +6,7 @@ import Prudence from "./main";
 import { ErrorMessages, PrudenceOptions, PrudenceSchema } from "./types";
 
 export function assert(
-    obj: Record<string, unknown>,
+    obj: Record<string, unknown> | unknown,
     schema: PrudenceSchema,
     errorMessages: ErrorMessages,
     options?: PrudenceOptions

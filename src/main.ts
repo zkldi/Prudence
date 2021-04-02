@@ -6,7 +6,7 @@ import { assert } from "./assert";
 
 interface APIFunctionSelf {
     (
-        object: Record<string, unknown>,
+        object: Record<string, unknown> | unknown,
         schema: PrudenceSchema,
         errorMessages?: ErrorMessages,
         options?: PrudenceOptions
