@@ -633,6 +633,42 @@ describe("Prudence Validators", () => {
                     "override error message"
                 );
             });
+
+            it("Custom error messages should take priority over built-in error messages.", () => {
+                expect(
+                    Prudence(
+                        {
+                            foo: 123,
+                        },
+                        {
+                            foo: "string",
+                        },
+                        {
+                            foo: "override error message",
+                        }
+                    ).message,
+                    "to be",
+                    "override error message"
+                );
+            });
+
+            it("Custom error messages should not take priority over function success.", () => {
+                expect(
+                    Prudence(
+                        {
+                            foo: 123,
+                        },
+                        {
+                            foo: () => true,
+                        },
+                        {
+                            foo: "override error message",
+                        }
+                    ),
+                    "to be",
+                    null
+                );
+            });
         });
     });
 });
