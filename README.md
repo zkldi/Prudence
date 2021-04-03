@@ -2,8 +2,11 @@
 
 The simple JS object validator.
 
-**Prudence is currently heavily in development, and should not be used in any serious production
+**Prudence is currently heavily in development, and should not be used in any
 environment.**
+
+**The API may (will!) suddenly change underfoot. Do not depend on this library for anything
+at the moment.**
 
 ## Documentation
 
