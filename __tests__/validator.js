@@ -615,6 +615,21 @@ describe("Prudence Validators", () => {
             });
         });
 
+        describe("Invalid Functions", () => {
+            it("Any falsy output should result in an error", () => {
+                expect(
+                    Prudence(
+                        { foo: 123 },
+                        {
+                            foo: () => null,
+                        }
+                    ),
+                    "not to be",
+                    null
+                );
+            });
+        });
+
         describe("Error Messages", () => {
             it("Custom error messages should take priority over function error messages.", () => {
                 expect(

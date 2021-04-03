@@ -250,7 +250,7 @@ function ValidateObject(
             let validateResult = ValidateValue(objectVal, schemaVal as ValidSchemaValue, object);
 
             if (
-                validateResult === false ||
+                !validateResult ||
                 (typeof errorMessageVal === "string" && typeof validateResult === "string")
             ) {
                 // If what we hit wasn't an object, we can just compare what the schema expects against the object.
