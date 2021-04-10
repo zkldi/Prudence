@@ -19,7 +19,7 @@ import {
  * @param errMessage
  */
 export function AttachErrMsg(fn: ValidationFunction, errMsg: string): ValidationFunction {
-    return (self: unknown, parent?: Record<string, unknown>) => {
+    return (self: unknown, parent: Record<string, unknown>) => {
         let result = fn(self, parent);
 
         if (typeof result === "string") {

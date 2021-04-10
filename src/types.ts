@@ -53,8 +53,14 @@ export type PrudenceSchema = {
 
 export type ValidSchemaValue = ValidationFunction | string | [ValidationFunction] | [string];
 
-export interface ValidationFunction {
-    (self: unknown, parent?: Record<string, unknown>): boolean | string;
+export interface ValidationFunctionSelf {
+    (self: unknown): boolean | string;
 }
+
+export interface ValidationFunctionParent {
+    (self: unknown, parent: Record<string, unknown>): boolean | string;
+}
+
+export type ValidationFunction = ValidationFunctionParent | ValidationFunctionSelf;
 
 export type PrudenceReturn = null | PrudenceError;
