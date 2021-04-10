@@ -2,8 +2,11 @@
 
 The simple JS object validator.
 
-**Prudence is currently heavily in development, and should not be used in any serious production
+**Prudence is currently heavily in development, and should not be used in any
 environment.**
+
+**The API may (will!) suddenly change underfoot. Do not depend on this library for anything
+at the moment.**
 
 ## Documentation
 
@@ -45,7 +48,7 @@ const Prudence = require("prudence").default; // CJS
 
 ## Returns
 
-Prudence returns null on success, and an error message on failure.
+Prudence returns null on success, and an error object on failure.
 
 ```js
 let err = Prudence(/* */);
@@ -95,7 +98,7 @@ let schema = {
 }
 
 // send the user an error message (your 400 handler here, basically).
-let errorHandler = (req, res, next, errMsg) => res.status(400).send(errMsg);
+let errorHandler = (req, res, next, errObject) => res.status(400).send(errObject.message);
 
 router.post("/register", Prudence.middleware(schema, errorHandler), (req, res) => {
     return res.status(200).send("registered account!");
