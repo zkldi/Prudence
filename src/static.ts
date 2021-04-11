@@ -199,9 +199,9 @@ function regex(regex: RegExp): ValidationFunction {
 }
 
 function allOf(...validators: ValidationFunction[]): ValidationFunction {
-    return (self: unknown, parent): boolean | string => {
+    return (self: unknown, parent, options): boolean | string => {
         for (const v of validators) {
-            let result = v(self, parent);
+            let result = v(self, parent, options);
 
             if (typeof result === "string") {
                 return result;
@@ -233,22 +233,19 @@ function notEqualTo(value: unknown) {
 // no op
 const any = () => true;
 
-// I can't think of a nice way to return err msgs for this.
-// function anyOf(...validators: ValidationFunction[]): ValidationFunction {
-//     return (self: unknown, parent): boolean | string => {
-//         for (const v of validators) {
-//             let result = v(self, parent);
+function anyOf(...validators: ValidationFunction[]): ValidationFunction {
+    return (self: unknown, parent, options): boolean | string => {
+        for (const v of validators) {
+            let result = v(self, parent, options);
 
-//             if (typeof result === "string") {
-//                 return result;
-//             } else if (result === false) {
-//                 return result;
-//             }
-//         }
+            if (result === true) {
+                return true;
+            }
+        }
 
-//         return false;
-//     };
-// }
+        return "The input was invalid, but no error message is available.";
+    };
+}
 
 const PrudenceStatic = {
     isBoundedInteger,
@@ -274,6 +271,7 @@ const PrudenceStatic = {
     equalTo,
     notEqualTo,
     any,
+    anyOf,
 };
 
 export default PrudenceStatic;

@@ -540,12 +540,50 @@ describe("Static Prudence Methods", () => {
         });
 
         it("Should pass if all functions pass", () => {
-            const badFn = Prudence.allOf(
+            const goodFn = Prudence.allOf(
                 () => true,
                 () => true,
                 () => true
             );
-            expect(Prudence({ foo: 1 }, { foo: badFn }), "to be null");
+            expect(Prudence({ foo: 1 }, { foo: goodFn }), "to be null");
+        });
+    });
+
+    describe("#anyOf", () => {
+        it("Should return a function", () => {
+            expect(
+                Prudence.anyOf(
+                    () => true,
+                    () => false
+                ),
+                "to be a function"
+            );
+        });
+
+        it("Should fail if all functions do not pass", () => {
+            const badFn = Prudence.anyOf(
+                () => false,
+                () => false
+            );
+            expect(Prudence({ foo: 1 }, { foo: badFn }), "not to be null");
+        });
+
+        it("Should pass if all functions pass", () => {
+            const goodFn = Prudence.anyOf(
+                () => true,
+                () => true,
+                () => true
+            );
+            expect(Prudence({ foo: 1 }, { foo: goodFn }), "to be null");
+        });
+
+        it("Should pass if any functions pass", () => {
+            const goodFn = Prudence.anyOf(
+                () => false,
+                () => true,
+                () => false
+            );
+            expect(Prudence({ foo: 1 }, { foo: goodFn }), "to be null");
         });
     });
 });

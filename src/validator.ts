@@ -16,7 +16,8 @@ import {
 function ValidateValue(
     value: unknown,
     schemaValue: ValidSchemaValue,
-    parent: Record<string, unknown>
+    parent: Record<string, unknown>,
+    prudenceOptions: PrudenceOptions
 ): boolean | string {
     if (typeof schemaValue === "string") {
         // if the string starts with ?*, the schema creator probably made a mistake.
@@ -71,7 +72,7 @@ function ValidateValue(
             `[Prudence] Invalid string schemaValue of "${schemaValue}". This is not a valid typeof value.`
         );
     } else if (typeof schemaValue === "function") {
-        return schemaValue(value, parent);
+        return schemaValue(value, parent, prudenceOptions);
     }
 
     // if we've gotten here, the schema has ill-defined validation.
@@ -208,7 +209,8 @@ function ValidateObject(
                     let arrayValid = ValidateValue(
                         element,
                         arraySchema as ValidSchemaValue,
-                        object
+                        object,
+                        options
                     );
 
                     if (typeof arrayValid === "string") {
@@ -247,7 +249,12 @@ function ValidateObject(
                 return recursiveErr;
             }
         } else {
-            let validateResult = ValidateValue(objectVal, schemaVal as ValidSchemaValue, object);
+            let validateResult = ValidateValue(
+                objectVal,
+                schemaVal as ValidSchemaValue,
+                object,
+                options
+            );
 
             if (
                 !validateResult ||

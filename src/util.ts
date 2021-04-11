@@ -19,8 +19,8 @@ import {
  * @param errMessage
  */
 export function AttachErrMsg(fn: ValidationFunction, errMsg: string): ValidationFunction {
-    return (self: unknown, parent: Record<string, unknown>) => {
-        let result = fn(self, parent);
+    return (self: unknown, parent: Record<string, unknown>, options: PrudenceOptions) => {
+        let result = fn(self, parent, options);
 
         if (typeof result === "string") {
             return result;

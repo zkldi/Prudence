@@ -61,6 +61,15 @@ export interface ValidationFunctionParent {
     (self: unknown, parent: Record<string, unknown>): boolean | string;
 }
 
-export type ValidationFunction = ValidationFunctionParent | ValidationFunctionSelf;
+export interface ValidationFunctionParentOptions {
+    (self: unknown, parent: Record<string, unknown>, prudenceOptions: PrudenceOptions):
+        | boolean
+        | string;
+}
+
+export type ValidationFunction =
+    | ValidationFunctionParent
+    | ValidationFunctionSelf
+    | ValidationFunctionParentOptions;
 
 export type PrudenceReturn = null | PrudenceError;
