@@ -1,5 +1,6 @@
-import { ValidationFunction } from "./types";
+import { ValidationFunction, ValidSchemaValue } from "./types";
 import { AttachErrMsg } from "./util";
+import { ValidateObjectValue } from "./validator";
 
 /**
  * Alias for Number.isSafeInteger.
@@ -198,22 +199,6 @@ function regex(regex: RegExp): ValidationFunction {
     );
 }
 
-function allOf(...validators: ValidationFunction[]): ValidationFunction {
-    return (self: unknown, parent, options): boolean | string => {
-        for (const v of validators) {
-            let result = v(self, parent, options);
-
-            if (typeof result === "string") {
-                return result;
-            } else if (result === false) {
-                return result;
-            }
-        }
-
-        return true;
-    };
-}
-
 function is(value: unknown) {
     return (self: unknown) => Object.is(self, value);
 }
@@ -233,12 +218,34 @@ function notEqualTo(value: unknown) {
 // no op
 const any = () => true;
 
-function anyOf(...validators: ValidationFunction[]): ValidationFunction {
-    return (self: unknown, parent, options): boolean | string => {
+/**
+ * Checks whether the input data passes all of the provided prudence values.
+ * @param validators Rest parameter. Any valid prudence value.
+ */
+function allOf(...validators: ValidSchemaValue[]): ValidationFunction {
+    return (self: unknown, parent, options, keychain) => {
         for (const v of validators) {
-            let result = v(self, parent, options);
+            let result = ValidateObjectValue(parent, self, v, undefined, options, keychain);
 
-            if (result === true) {
+            if (result) {
+                return result;
+            }
+        }
+
+        return true;
+    };
+}
+
+/**
+ * Checks whether the input data passes any of the provided prudence values.
+ * @param validators Rest parameter. Any valid prudence value.
+ */
+function anyOf(...validators: ValidationFunction[]): ValidationFunction {
+    return (self: unknown, parent, options, keychain) => {
+        for (const v of validators) {
+            let result = ValidateObjectValue(parent, self, v, undefined, options, keychain);
+
+            if (result === null) {
                 return true;
             }
         }

@@ -17,8 +17,9 @@ function ValidateValue(
     value: unknown,
     schemaValue: ValidSchemaValue,
     parent: Record<string, unknown>,
-    prudenceOptions: PrudenceOptions
-): boolean | string {
+    prudenceOptions: PrudenceOptions,
+    currentKeyChain: string[]
+): boolean | string | PrudenceError {
     if (typeof schemaValue === "string") {
         // if the string starts with ?*, the schema creator probably made a mistake.
         // warn them as such.
@@ -72,7 +73,7 @@ function ValidateValue(
             `[Prudence] Invalid string schemaValue of "${schemaValue}". This is not a valid typeof value.`
         );
     } else if (typeof schemaValue === "function") {
-        return schemaValue(value, parent, prudenceOptions);
+        return schemaValue(value, parent, prudenceOptions, currentKeyChain);
     }
 
     // if we've gotten here, the schema has ill-defined validation.
@@ -89,6 +90,99 @@ function ValidateValue(
  */
 function CheckObjectExists(obj: unknown): obj is Record<string, unknown> {
     return !!obj && typeof obj === "object";
+}
+
+function ValidateObjectValue(
+    object: Record<string, unknown>,
+    objectVal: Record<string, unknown> | unknown,
+    schemaVal: PrudenceSchema | ValidSchemaValue | [PrudenceSchema],
+    errorMessageVal: ErrorMessages | string | undefined,
+    options: PrudenceOptions,
+    currentKeyChain: string[] = []
+): PrudenceError | null {
+    // If the schema is an array, the first value in there is used as a validator upon an array.
+    if (Array.isArray(schemaVal)) {
+        if (!schemaVal[0]) {
+            throw new Error(
+                `[Prudence] Invalid schema at ${StringifyKeyChain(
+                    currentKeyChain
+                )}, array must have atleast one value.`
+            );
+        }
+
+        // the provided object must be an array to match this.
+        if (!Array.isArray(objectVal)) {
+            return new PrudenceError(
+                "Value was not an array.",
+                StringifyKeyChain(currentKeyChain),
+                objectVal
+            );
+        }
+
+        let arraySchema = schemaVal[0];
+
+        for (let i = 0; i < objectVal.length; i++) {
+            let arrKeychain = [...currentKeyChain, i.toString()];
+
+            let err = ValidateObjectValue(
+                object,
+                objectVal[i],
+                arraySchema,
+                errorMessageVal,
+                options,
+                arrKeychain
+            );
+
+            if (err) {
+                return err;
+            }
+        }
+    } else if (schemaVal && typeof schemaVal === "object") {
+        // If what we hit is an object inside the schema, run ValidateObject recursively.
+        let recursiveErr = ValidateObject(
+            objectVal,
+            schemaVal as PrudenceSchema,
+            errorMessageVal,
+            options,
+            currentKeyChain
+        );
+
+        if (recursiveErr) {
+            // if the recursive check failed, return the failed check to pass the error message up.
+            return recursiveErr;
+        }
+    } else {
+        let validateResult = ValidateValue(
+            objectVal,
+            schemaVal as ValidSchemaValue,
+            object,
+            options,
+            currentKeyChain
+        );
+
+        if (
+            !validateResult ||
+            (typeof errorMessageVal === "string" && typeof validateResult === "string")
+        ) {
+            // If what we hit wasn't an object, we can just compare what the schema expects against the object.
+
+            let errorMessage = GetErrorMessage(
+                objectVal,
+                schemaVal,
+                currentKeyChain,
+                options,
+                errorMessageVal
+            );
+
+            return errorMessage;
+        } else if (typeof validateResult === "string") {
+            return new PrudenceError(validateResult, StringifyKeyChain(currentKeyChain), objectVal);
+        } else if (validateResult instanceof PrudenceError) {
+            return validateResult;
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -158,126 +252,17 @@ function ValidateObject(
                 ? (errorMessages as ErrorMessages)[key]
                 : undefined;
 
-        // If the schema is an array, the first value in there is used as a validator upon an array.
-        if (Array.isArray(schemaVal)) {
-            if (!schemaVal[0]) {
-                throw new Error(
-                    `[Prudence] Invalid schema at ${StringifyKeyChain(
-                        currentKeyChain
-                    )}, array must have exactly one value.`
-                );
-            }
+        let result = ValidateObjectValue(
+            object,
+            objectVal,
+            schemaVal,
+            errorMessageVal,
+            options,
+            currentKeyChain
+        );
 
-            // the provided object must be an array to match this.
-            if (!Array.isArray(objectVal)) {
-                return new PrudenceError(
-                    "Value was not an array",
-                    StringifyKeyChain(currentKeyChain),
-                    objectVal
-                );
-            }
-
-            let arraySchema = schemaVal[0];
-
-            // todo: not copy paste this for either branch.
-            if (typeof arraySchema === "object" && arraySchema) {
-                // if the first value in the array is an object, we traverse the objects array
-                // validating every object against the schema.
-                for (let i = 0; i < objectVal.length; i++) {
-                    let element = objectVal[i];
-
-                    let arrKeychain = [...currentKeyChain, i.toString()];
-
-                    let arrayErr = ValidateObject(
-                        element,
-                        arraySchema as PrudenceSchema,
-                        errorMessageVal,
-                        options,
-                        arrKeychain
-                    );
-
-                    if (arrayErr) {
-                        return arrayErr;
-                    }
-                }
-            } else {
-                // if the first value in the array is not an object, we traverse the objects array
-                // comparing it as an array of values.
-                for (let i = 0; i < objectVal.length; i++) {
-                    let element = objectVal[i];
-
-                    let arrayValid = ValidateValue(
-                        element,
-                        arraySchema as ValidSchemaValue,
-                        object,
-                        options
-                    );
-
-                    if (typeof arrayValid === "string") {
-                        return new PrudenceError(
-                            arrayValid,
-                            StringifyKeyChain([...currentKeyChain, i.toString()]),
-                            element
-                        );
-                    } else if (arrayValid === false) {
-                        currentKeyChain.push(i.toString());
-
-                        let errorMessage = GetErrorMessage(
-                            element,
-                            arraySchema,
-                            currentKeyChain,
-                            options,
-                            errorMessageVal
-                        );
-
-                        return errorMessage;
-                    }
-                }
-            }
-        } else if (schemaVal && typeof schemaVal === "object") {
-            // If what we hit is an object inside the schema, run ValidateObject recursively.
-            let recursiveErr = ValidateObject(
-                objectVal,
-                schemaVal as PrudenceSchema,
-                errorMessageVal,
-                options,
-                currentKeyChain
-            );
-
-            if (recursiveErr) {
-                // if the recursive check failed, return the failed check to pass the error message up.
-                return recursiveErr;
-            }
-        } else {
-            let validateResult = ValidateValue(
-                objectVal,
-                schemaVal as ValidSchemaValue,
-                object,
-                options
-            );
-
-            if (
-                !validateResult ||
-                (typeof errorMessageVal === "string" && typeof validateResult === "string")
-            ) {
-                // If what we hit wasn't an object, we can just compare what the schema expects against the object.
-
-                let errorMessage = GetErrorMessage(
-                    objectVal,
-                    schemaVal,
-                    currentKeyChain,
-                    options,
-                    errorMessageVal
-                );
-
-                return errorMessage;
-            } else if (typeof validateResult === "string") {
-                return new PrudenceError(
-                    validateResult,
-                    StringifyKeyChain(currentKeyChain),
-                    objectVal
-                );
-            }
+        if (result) {
+            return result;
         }
     }
 
@@ -319,9 +304,12 @@ function StringifyKeyChain(keyChain: string[]): string | null {
 
     if (str.includes(".")) {
         str = `["${str}"]`;
-    } else if (str.match(/^[0-9]/)) {
-        // if starts with a number
+    } else if (str.match(/^[0-9]+$/)) {
+        // if only numbers
         str = `[${str}]`;
+    } else if (str.match(/^[0-9]/)) {
+        // if starts with a number but is not only numbers
+        str = `["${str}"]`;
     }
 
     for (let i = 1; i < keyChain.length; i++) {
@@ -477,4 +465,5 @@ export {
     GetErrorMessage,
     StringifyKeyChain,
     ValidateObject,
+    ValidateObjectValue,
 };

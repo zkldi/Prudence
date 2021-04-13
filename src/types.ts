@@ -54,22 +54,33 @@ export type PrudenceSchema = {
 export type ValidSchemaValue = ValidationFunction | string | [ValidationFunction] | [string];
 
 export interface ValidationFunctionSelf {
-    (self: unknown): boolean | string;
+    (self: unknown): boolean | string | PrudenceError;
 }
 
 export interface ValidationFunctionParent {
-    (self: unknown, parent: Record<string, unknown>): boolean | string;
+    (self: unknown, parent: Record<string, unknown>): boolean | string | PrudenceError;
 }
 
 export interface ValidationFunctionParentOptions {
     (self: unknown, parent: Record<string, unknown>, prudenceOptions: PrudenceOptions):
         | boolean
-        | string;
+        | string
+        | PrudenceError;
+}
+
+export interface ValidationFunctionParentOptionsKeychain {
+    (
+        self: unknown,
+        parent: Record<string, unknown>,
+        prudenceOptions: PrudenceOptions,
+        keyChain: string[]
+    ): boolean | string | PrudenceError;
 }
 
 export type ValidationFunction =
     | ValidationFunctionParent
     | ValidationFunctionSelf
-    | ValidationFunctionParentOptions;
+    | ValidationFunctionParentOptions
+    | ValidationFunctionParentOptionsKeychain;
 
 export type PrudenceReturn = null | PrudenceError;

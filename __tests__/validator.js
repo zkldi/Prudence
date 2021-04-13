@@ -613,6 +613,84 @@ describe("Prudence Validators", () => {
                     }
                 );
             });
+
+            let arraySchemaNesting = {
+                "2dArray": [[Prudence.isPositiveInteger]],
+            };
+
+            it("Should allow valid input for doubly-nested array schemas", () => {
+                expect(
+                    Prudence(
+                        {
+                            "2dArray": [
+                                [1, 2],
+                                [3, 4],
+                                [5, 6],
+                            ],
+                        },
+                        arraySchemaNesting
+                    ),
+                    "to be",
+                    null
+                );
+            });
+
+            it("Should reject invalid value input for doubly-nested array schemas", () => {
+                expect(
+                    Prudence(
+                        {
+                            "2dArray": [
+                                [1, 2.5],
+                                [3, 4],
+                                [5, 6],
+                            ],
+                        },
+                        arraySchemaNesting
+                    ),
+                    "to exhaustively satisfy",
+                    {
+                        keychain: '["2dArray"][0][1]',
+                        message: "Expected a positive integer.",
+                        userVal: 2.5,
+                    }
+                );
+
+                expect(
+                    Prudence(
+                        {
+                            "2dArray": [
+                                [1, 2],
+                                [3, 4],
+                                [5.5, 6],
+                            ],
+                        },
+                        arraySchemaNesting
+                    ),
+                    "to exhaustively satisfy",
+                    {
+                        keychain: '["2dArray"][2][0]',
+                        message: "Expected a positive integer.",
+                        userVal: 5.5,
+                    }
+                );
+            });
+
+            it("Should reject non-arrays at any point for doubly-nested array schemas", () => {
+                expect(
+                    Prudence(
+                        {
+                            "2dArray": [[1, 2], [3, 4], 6],
+                        },
+                        arraySchemaNesting
+                    ),
+                    "to exhaustively satisfy",
+                    {
+                        keychain: '["2dArray"][2]',
+                        message: "Value was not an array.",
+                        userVal: 6,
+                    }
+                );
+            });
         });
 
         describe("Invalid Functions", () => {

@@ -547,6 +547,28 @@ describe("Static Prudence Methods", () => {
             );
             expect(Prudence({ foo: 1 }, { foo: goodFn }), "to be null");
         });
+
+        it("Should work with any valid prudence value", () => {
+            const schema = {
+                root: Prudence.allOf(
+                    (s) => typeof s.foo === "number",
+                    (s) => typeof s.bar === "string",
+                    {
+                        foo: Prudence.any,
+                        bar: Prudence.any,
+                    }
+                ),
+            };
+
+            expect(Prudence({ root: { foo: 123, bar: "asdf" } }, schema), "to be null");
+
+            expect(
+                Prudence({ root: { foo: 123, bar: "asdf", baz: "fdsa" } }, schema),
+                "not to be null"
+            );
+            expect(Prudence({ root: { foo: "asdf", bar: "asdf" } }, schema), "not to be null");
+            expect(Prudence({ root: { foo: 123, bar: 123 } }, schema), "not to be null");
+        });
     });
 
     describe("#anyOf", () => {
@@ -584,6 +606,27 @@ describe("Static Prudence Methods", () => {
                 () => false
             );
             expect(Prudence({ foo: 1 }, { foo: goodFn }), "to be null");
+        });
+
+        it("Should work with any valid prudence value", () => {
+            const schema = {
+                root: Prudence.anyOf(
+                    { foo: "string" },
+                    { bar: "number" },
+                    "null",
+                    (s) => typeof s === "number" && s % 2 === 0
+                ),
+            };
+
+            expect(Prudence({ root: { foo: "Any string" } }, schema), "to be null");
+            expect(Prudence({ root: { bar: 123.456 } }, schema), "to be null");
+            expect(Prudence({ root: null }, schema), "to be null");
+            expect(Prudence({ root: 12 }, schema), "to be null");
+
+            expect(Prudence({ root: { foo: 123 } }, schema), "not to be null");
+            expect(Prudence({ root: { bar: "not a number" } }, schema), "not to be null");
+            expect(Prudence({ root: [] }, schema), "not to be null");
+            expect(Prudence({ root: 13 }, schema), "not to be null");
         });
     });
 });

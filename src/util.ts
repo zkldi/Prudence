@@ -19,8 +19,13 @@ import {
  * @param errMessage
  */
 export function AttachErrMsg(fn: ValidationFunction, errMsg: string): ValidationFunction {
-    return (self: unknown, parent: Record<string, unknown>, options: PrudenceOptions) => {
-        let result = fn(self, parent, options);
+    return (
+        self: unknown,
+        parent: Record<string, unknown>,
+        options: PrudenceOptions,
+        keychain: string[]
+    ) => {
+        let result = fn(self, parent, options, keychain);
 
         if (typeof result === "string") {
             return result;
