@@ -279,6 +279,8 @@ const PrudenceStatic = {
     notEqualTo,
     any,
     anyOf,
+    or: anyOf,
+    and: allOf,
 };
 
 export default PrudenceStatic;
