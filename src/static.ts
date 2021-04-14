@@ -240,7 +240,7 @@ function allOf(...validators: ValidSchemaValue[]): ValidationFunction {
  * Checks whether the input data passes any of the provided prudence values.
  * @param validators Rest parameter. Any valid prudence value.
  */
-function anyOf(...validators: ValidationFunction[]): ValidationFunction {
+function anyOf(...validators: ValidSchemaValue[]): ValidationFunction {
     return (self: unknown, parent, options, keychain) => {
         for (const v of validators) {
             let result = ValidateObjectValue(parent, self, v, undefined, options, keychain);
