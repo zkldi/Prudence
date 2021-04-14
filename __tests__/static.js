@@ -629,4 +629,123 @@ describe("Static Prudence Methods", () => {
             expect(Prudence({ root: 13 }, schema), "not to be null");
         });
     });
+
+    describe("#nullable", () => {
+        it("Should validate against any prudence value.", () => {
+            const stringSchema = { field: Prudence.nullable("string") };
+            expect(
+                Prudence(
+                    {
+                        field: null,
+                    },
+                    stringSchema
+                ),
+                "to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: "anystring",
+                    },
+                    stringSchema
+                ),
+                "to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: 123,
+                    },
+                    stringSchema
+                ),
+                "not to be null"
+            );
+
+            const functionSchema = {
+                field: Prudence.nullable((self) => typeof self === "number" && self % 2 === 0),
+            };
+
+            expect(
+                Prudence(
+                    {
+                        field: null,
+                    },
+                    functionSchema
+                ),
+                "to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: 2,
+                    },
+                    functionSchema
+                ),
+                "to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: 1,
+                    },
+                    functionSchema
+                ),
+                "not to be null"
+            );
+
+            const nestedSchema = {
+                field: Prudence.nullable({
+                    nested: "string",
+                }),
+            };
+
+            expect(
+                Prudence(
+                    {
+                        field: null,
+                    },
+                    nestedSchema
+                ),
+                "to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: {
+                            nested: "foo",
+                        },
+                    },
+                    nestedSchema
+                ),
+                "to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: {
+                            nested: 1,
+                        },
+                    },
+                    nestedSchema
+                ),
+                "not to be null"
+            );
+
+            expect(
+                Prudence(
+                    {
+                        field: {},
+                    },
+                    nestedSchema
+                ),
+                "not to be null"
+            );
+        });
+    });
 });

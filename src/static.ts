@@ -215,16 +215,31 @@ function notEqualTo(value: unknown) {
     return (self: unknown) => self !== value;
 }
 
+function nullable(schemaValue: ValidSchemaValue): ValidationFunction {
+    return (self, parent, options, keychain) => {
+        if (self === null) {
+            return true;
+        }
+
+        let result = ValidateObjectValue(parent, self, schemaValue, undefined, options, keychain);
+        if (result) {
+            return result;
+        }
+
+        return true;
+    };
+}
+
 // no op
 const any = () => true;
 
 /**
  * Checks whether the input data passes all of the provided prudence values.
- * @param validators Rest parameter. Any valid prudence value.
+ * @param schemaValues Rest parameter. Any valid prudence value.
  */
-function allOf(...validators: ValidSchemaValue[]): ValidationFunction {
-    return (self: unknown, parent, options, keychain) => {
-        for (const v of validators) {
+function allOf(...schemaValues: ValidSchemaValue[]): ValidationFunction {
+    return (self, parent, options, keychain) => {
+        for (const v of schemaValues) {
             let result = ValidateObjectValue(parent, self, v, undefined, options, keychain);
 
             if (result) {
@@ -238,11 +253,11 @@ function allOf(...validators: ValidSchemaValue[]): ValidationFunction {
 
 /**
  * Checks whether the input data passes any of the provided prudence values.
- * @param validators Rest parameter. Any valid prudence value.
+ * @param schemaValues Rest parameter. Any valid prudence value.
  */
-function anyOf(...validators: ValidSchemaValue[]): ValidationFunction {
-    return (self: unknown, parent, options, keychain) => {
-        for (const v of validators) {
+function anyOf(...schemaValues: ValidSchemaValue[]): ValidationFunction {
+    return (self, parent, options, keychain) => {
+        for (const v of schemaValues) {
             let result = ValidateObjectValue(parent, self, v, undefined, options, keychain);
 
             if (result === null) {
@@ -281,6 +296,7 @@ const PrudenceStatic = {
     anyOf,
     or: anyOf,
     and: allOf,
+    nullable,
 };
 
 export default PrudenceStatic;
