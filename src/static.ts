@@ -242,6 +242,21 @@ function nullable(schemaValue: ValidSchemaValue): ValidationFunction {
     };
 }
 
+function optional(schemaValue: ValidSchemaValue): ValidationFunction {
+    return (self, parent, options, keychain) => {
+        if (self === undefined) {
+            return true;
+        }
+
+        let result = ValidateObjectValue(parent, self, schemaValue, undefined, options, keychain);
+        if (result) {
+            return result;
+        }
+
+        return true;
+    };
+}
+
 // no op
 const any = () => true;
 
@@ -310,6 +325,7 @@ const PrudenceStatic = {
     and: allOf,
     nullable,
     isBetween,
+    optional,
 };
 
 export default PrudenceStatic;
