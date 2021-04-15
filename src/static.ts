@@ -1,15 +1,11 @@
 import { ValidationFunction, ValidSchemaValue } from "./types";
-import { AttachErrMsg } from "./util";
 import { ValidateObjectValue } from "./validator";
 
 /**
  * Alias for Number.isSafeInteger.
  * @returns {ValidationFunction}
  */
-const isInteger = AttachErrMsg(
-    (self: unknown): boolean => Number.isSafeInteger(self),
-    "Expected an integer."
-);
+const isInteger = (self: unknown) => Number.isSafeInteger(self) || "Expected an integer.";
 
 /**
  * Returns a validation function that checks if the passed value is a number and greater than
@@ -18,11 +14,9 @@ const isInteger = AttachErrMsg(
  * @param number The number the value must be greater than.
  * @returns {ValidationFunction}
  */
-const gt = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isFinite(self) && (self as number) > number,
-        `Expected number to be greater than ${number}.`
-    );
+const gt = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isFinite(self) && (self as number) > number) ||
+    `Expected number to be greater than ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is a number and greater than
@@ -31,11 +25,9 @@ const gt = (number: number): ValidationFunction =>
  * @param number The number the value must be greater than or equal to.
  * @returns {ValidationFunction}
  */
-const gte = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isFinite(self) && (self as number) >= number,
-        `Expected number to be greater than or equal to ${number}.`
-    );
+const gte = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isFinite(self) && (self as number) >= number) ||
+    `Expected number to be greater than or equal to ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is a number and less than
@@ -44,11 +36,9 @@ const gte = (number: number): ValidationFunction =>
  * @param number The number the value must be less than.
  * @returns {ValidationFunction}
  */
-const lt = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isFinite(self) && (self as number) < number,
-        `Expected number to be less than ${number}.`
-    );
+const lt = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isFinite(self) && (self as number) < number) ||
+    `Expected number to be less than ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is a number and less than
@@ -57,11 +47,9 @@ const lt = (number: number): ValidationFunction =>
  * @param number The number the value must be less than or equal to.
  * @returns {ValidationFunction}
  */
-const lte = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isFinite(self) && (self as number) <= number,
-        `Expected number to be less than or equal to ${number}.`
-    );
+const lte = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isFinite(self) && (self as number) <= number) ||
+    `Expected number to be less than or equal to ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is an integer and greater than
@@ -70,11 +58,9 @@ const lte = (number: number): ValidationFunction =>
  * @param number The number the value must be greater than.
  * @returns {ValidationFunction}
  */
-const gtInt = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > number,
-        `Expected number to be an integer and greater than ${number}.`
-    );
+const gtInt = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isSafeInteger(self) && (self as number) > number) ||
+    `Expected number to be an integer and greater than ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is an integer and greater than
@@ -83,11 +69,9 @@ const gtInt = (number: number): ValidationFunction =>
  * @param number The number the value must be greater than or equal to.
  * @returns {ValidationFunction}
  */
-const gteInt = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= number,
-        `Expected number to be an integer and greater than or equal to ${number}.`
-    );
+const gteInt = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isSafeInteger(self) && (self as number) >= number) ||
+    `Expected number to be an integer and greater than or equal to ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is an integer and less than
@@ -96,11 +80,9 @@ const gteInt = (number: number): ValidationFunction =>
  * @param number The number the value must be less than.
  * @returns {ValidationFunction}
  */
-const ltInt = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) < number,
-        `Expected number to be an integer and less than ${number}.`
-    );
+const ltInt = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isSafeInteger(self) && (self as number) < number) ||
+    `Expected number to be an integer and less than ${number}.`;
 
 /**
  * Returns a validation function that checks if the passed value is an integer and less than
@@ -109,27 +91,21 @@ const ltInt = (number: number): ValidationFunction =>
  * @param number The number the value must be less than or equal to.
  * @returns {ValidationFunction}
  */
-const lteInt = (number: number): ValidationFunction =>
-    AttachErrMsg(
-        (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) <= number,
-        `Expected number to be an integer and less than or equal to ${number}.`
-    );
+const lteInt = (number: number): ValidationFunction => (self: unknown) =>
+    (Number.isSafeInteger(self) && (self as number) <= number) ||
+    `Expected number to be an integer and less than or equal to ${number}.`;
 
 /**
  * Determines if a value is a positive integer.
  */
-const isPositiveInteger = AttachErrMsg(
-    (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) >= 0,
-    "Expected a positive integer."
-);
+const isPositiveInteger = (self: unknown) =>
+    (Number.isSafeInteger(self) && (self as number) >= 0) || "Expected a positive integer.";
 
 /**
  * Determines if a value is a positive integer and not 0.
  */
-const isPositiveNonZeroInteger = AttachErrMsg(
-    (self: unknown): boolean => Number.isSafeInteger(self) && (self as number) > 0,
-    "Expected a positive non-zero integer."
-);
+const isPositiveNonZeroInteger = (self: unknown) =>
+    (Number.isSafeInteger(self) && (self as number) > 0) || "Expected a positive non-zero integer.";
 
 /**
  * Takes a lower bound and an upper bound and returns a function that validates
@@ -138,30 +114,24 @@ const isPositiveNonZeroInteger = AttachErrMsg(
  * @param upperBound The upper bound. Inclusive.
  */
 function isBoundedInteger(lowerBound: number, upperBound: number): ValidationFunction {
-    return AttachErrMsg(
-        (self: unknown): boolean =>
-            Number.isSafeInteger(self) &&
+    return (self: unknown) =>
+        (Number.isSafeInteger(self) &&
             (self as number) <= upperBound &&
-            (self as number) >= lowerBound,
-        `Expected an integer between ${lowerBound} and ${upperBound}.`
-    );
+            (self as number) >= lowerBound) ||
+        `Expected an integer between ${lowerBound} and ${upperBound}.`;
 }
 
 /**
  * Determines if a value is a positive number.
  */
-const isPositive = AttachErrMsg(
-    (self: unknown): boolean => Number.isFinite(self) && (self as number) >= 0,
-    "Expected a positive number."
-);
+const isPositive = (self: unknown) =>
+    (Number.isFinite(self) && (self as number) >= 0) || "Expected a positive number.";
 
 /**
  * Determines if a value is a positive number and non-zero.
  */
-const isPositiveNonZero = AttachErrMsg(
-    (self: unknown): boolean => Number.isFinite(self) && (self as number) > 0,
-    "Expected a positive non-zero number."
-);
+const isPositiveNonZero = (self: unknown) =>
+    (Number.isFinite(self) && (self as number) > 0) || "Expected a positive non-zero number.";
 
 /**
  * Takes a list of items and returns a function that checks if a provided value is inside that array.
@@ -181,11 +151,9 @@ function isIn(...values: unknown[]): ValidationFunction {
  * @param upper The upper bound for the length. Inclusive.
  */
 function isBoundedString(lower: number, upper: number): ValidationFunction {
-    return AttachErrMsg(
-        (self: unknown): boolean =>
-            typeof self === "string" && self.length >= lower && self.length <= upper,
-        `Expected a string with length between ${lower} and ${upper}.`
-    );
+    return (self: unknown) =>
+        (typeof self === "string" && self.length >= lower && self.length <= upper) ||
+        `Expected a string with length between ${lower} and ${upper}.`;
 }
 
 /**
@@ -194,10 +162,9 @@ function isBoundedString(lower: number, upper: number): ValidationFunction {
  * @param upper The upper bound for the number. Inclusive.
  */
 function isBetween(lower: number, upper: number): ValidationFunction {
-    return AttachErrMsg(
-        (self: unknown) => typeof self === "number" && self >= lower && self <= upper,
-        `Expected a number between ${lower} and ${upper}.`
-    );
+    return (self: unknown) =>
+        (typeof self === "number" && self >= lower && self <= upper) ||
+        `Expected a number between ${lower} and ${upper}.`;
 }
 
 /**
@@ -205,10 +172,9 @@ function isBetween(lower: number, upper: number): ValidationFunction {
  * @param regex The regex to match.
  */
 function regex(regex: RegExp): ValidationFunction {
-    return AttachErrMsg(
-        (self: unknown): boolean => typeof self === "string" && regex.test(self),
-        `Expected string to match ${regex.toString()}`
-    );
+    return (self: unknown) =>
+        (typeof self === "string" && regex.test(self)) ||
+        `Expected string to match ${regex.toString()}`;
 }
 
 function is(value: unknown) {
