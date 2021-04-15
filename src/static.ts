@@ -189,6 +189,18 @@ function isBoundedString(lower: number, upper: number): ValidationFunction {
 }
 
 /**
+ * Checks whether an item is a number, and it is between the two values.
+ * @param lower The lower bound for the number. Inclusive.
+ * @param upper The upper bound for the number. Inclusive.
+ */
+function isBetween(lower: number, upper: number): ValidationFunction {
+    return AttachErrMsg(
+        (self: unknown) => typeof self === "number" && self >= lower && self <= upper,
+        `Expected a number between ${lower} and ${upper}.`
+    );
+}
+
+/**
  * Checks whether a value is a string that matches the given regex.
  * @param regex The regex to match.
  */
@@ -297,6 +309,7 @@ const PrudenceStatic = {
     or: anyOf,
     and: allOf,
     nullable,
+    isBetween,
 };
 
 export default PrudenceStatic;
