@@ -414,10 +414,17 @@ function GetErrorMessage(
 function ValidateMain(
     object: Record<string, unknown> | unknown,
     schema: PrudenceSchema,
+    // eslint-disable-next-line default-param-last
     errorMessages: ErrorMessages = {},
-    options: PrudenceOptions = Validator.defaultOptions
+    options?: Partial<PrudenceOptions>
 ): PrudenceReturn {
-    return ValidateObject(object, schema, errorMessages, options);
+    if (options) {
+        options = Object.assign({}, Validator.defaultOptions, options);
+    } else {
+        options = Validator.defaultOptions;
+    }
+
+    return ValidateObject(object, schema, errorMessages, options as PrudenceOptions);
 }
 
 /**
