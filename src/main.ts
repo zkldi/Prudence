@@ -9,7 +9,7 @@ interface APIFunctionSelf {
         object: Record<string, unknown> | unknown,
         schema: PrudenceSchema,
         errorMessages?: ErrorMessages,
-        options?: PrudenceOptions
+        options?: Partial<PrudenceOptions>
     ): PrudenceReturn;
 }
 

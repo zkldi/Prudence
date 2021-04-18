@@ -9,7 +9,7 @@ export function assert(
     obj: Record<string, unknown> | unknown,
     schema: PrudenceSchema,
     errorMessages: ErrorMessages,
-    options?: PrudenceOptions
+    options?: Partial<PrudenceOptions>
 ) {
     let err = Prudence(obj, schema, errorMessages, options);
 

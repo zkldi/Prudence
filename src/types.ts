@@ -28,7 +28,7 @@ export interface PrudenceMiddlewareGenWithHandler {
     (
         schema: PrudenceSchema,
         errorMessages?: ErrorMessages,
-        options?: PrudenceOptions
+        options?: Partial<PrudenceOptions>
     ): RequestHandler;
 }
 
@@ -37,7 +37,7 @@ export interface PrudenceMiddlewareGen {
         schema: PrudenceSchema,
         errorHandler?: MiddlewareErrorHandler | null,
         errorMessages?: ErrorMessages,
-        options?: PrudenceOptions
+        options?: Partial<PrudenceOptions>
     ): RequestHandler;
 }
 

@@ -49,7 +49,7 @@ export function CurryMiddleware(
     return (
         schema: PrudenceSchema,
         errorMessages: ErrorMessages = {},
-        options: PrudenceOptions = Prudence.Validator.defaultOptions
+        options: Partial<PrudenceOptions> = Prudence.Validator.defaultOptions
     ): RequestHandler => Middleware(schema, errorHandler, errorMessages, options);
 }
 
@@ -66,7 +66,7 @@ export function Middleware(
     schema: PrudenceSchema,
     errorHandler?: MiddlewareErrorHandler | null,
     errorMessages: ErrorMessages = {},
-    options: PrudenceOptions = Prudence.Validator.defaultOptions
+    options: Partial<PrudenceOptions> = Prudence.Validator.defaultOptions
 ): RequestHandler {
     return (req: Request, res: Response, next: NextFunction): void => {
         let err: PrudenceReturn = null;
