@@ -1,6 +1,6 @@
 {
     "name": "prudence",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "description": "The Simple Object Validator.",
     "main": "js/main.js",
     "scripts": {
