@@ -262,6 +262,15 @@ function anyOf(...schemaValues: ValidSchemaValue[]): ValidationFunction {
     };
 }
 
+/**
+ * Checks whether the input data is approximately the first argument.
+ * @param number The number the input data should be approximately equal to.
+ * @param leninecy By what +/- degree to accept inputs. This is inclusive on both ends.
+ */
+function aprx(number: number, leniency = 0.01) {
+    return (self: unknown) => (typeof self === "number" && Math.abs(number - leniency) < leniency) || `Expected a number approximately equal to ${number}`
+}
+
 const PrudenceStatic = {
     isBoundedInteger,
     isPositiveInteger,
@@ -292,6 +301,7 @@ const PrudenceStatic = {
     nullable,
     isBetween,
     optional,
+    aprx
 };
 
 export default PrudenceStatic;
