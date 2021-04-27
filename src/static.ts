@@ -268,7 +268,7 @@ function anyOf(...schemaValues: ValidSchemaValue[]): ValidationFunction {
  * @param leninecy By what +/- degree to accept inputs. This is inclusive on both ends.
  */
 function aprx(number: number, leniency = 0.01) {
-    return (self: unknown) => (typeof self === "number" && Math.abs(number - leniency) < leniency) || `Expected a number approximately equal to ${number}`
+    return (self: unknown) => (typeof self === "number" && Math.abs(number - self) < leniency) || `Expected a number approximately equal to ${number}`
 }
 
 const PrudenceStatic = {
