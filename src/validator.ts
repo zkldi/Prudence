@@ -266,6 +266,10 @@ function ValidateObject(
         }
     }
 
+    if (options.allowExcessKeys) {
+        return null;
+    }
+
     let invalidObjKeys: Array<string> = [];
 
     for (const key in object) {
@@ -419,7 +423,11 @@ function ValidateMain(
     options?: Partial<PrudenceOptions>
 ): PrudenceReturn {
     if (options) {
-        options = Object.assign({}, Validator.defaultOptions, options);
+        console.dir(options);
+        options.allowExcessKeys ??= Validator.defaultOptions.allowExcessKeys;
+        options.throwOnNonObject ??= Validator.defaultOptions.throwOnNonObject;
+
+        console.dir(options);
     } else {
         options = Validator.defaultOptions;
     }
@@ -437,7 +445,7 @@ class Validator {
         throwOnNonObject: true,
     };
 
-    options = Validator.defaultOptions;
+    options = Object.assign({}, Validator.defaultOptions);
 
     constructor(options?: Partial<PrudenceOptions>) {
         if (!options) {
@@ -462,7 +470,8 @@ class Validator {
         }
     }
 
-    Validate = ValidateMain;
+    Validate = (object: Record<string, unknown> | unknown, schema: PrudenceSchema, errorMessages: ErrorMessages = {}) => 
+        ValidateMain(object, schema, errorMessages, this.options);
 }
 
 export {
