@@ -423,11 +423,8 @@ function ValidateMain(
     options?: Partial<PrudenceOptions>
 ): PrudenceReturn {
     if (options) {
-        console.dir(options);
         options.allowExcessKeys ??= Validator.defaultOptions.allowExcessKeys;
         options.throwOnNonObject ??= Validator.defaultOptions.throwOnNonObject;
-
-        console.dir(options);
     } else {
         options = Validator.defaultOptions;
     }
