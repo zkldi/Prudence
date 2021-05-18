@@ -240,7 +240,6 @@ function ValidateObject(
         let currentKeyChain = [...keyChain, key];
 
         // Get the value at both the schema and the object of this given key.
-        // @ts-expect-error we know
         let schemaVal: ValidSchemaValue = schema[key];
         let objectVal = object[key];
 
@@ -278,7 +277,6 @@ function ValidateObject(
             continue;
         }
 
-        // @ts-expect-error we know
         if (!schema[key]) {
             invalidObjKeys.push(key);
         }

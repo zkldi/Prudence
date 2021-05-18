@@ -49,7 +49,7 @@ export type ErrorMessages = { [prop: string]: string | ErrorMessages };
 
 export type PrudenceSchema = {
     [prop: string]: ValidSchemaValue
-} | [PrudenceSchema];
+};
 
 export type ValidSchemaValue = ValidationFunction | string | [ValidationFunction] | [string] | PrudenceSchema | [PrudenceSchema];
 
