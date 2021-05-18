@@ -254,6 +254,38 @@ describe("Prudence Validators", () => {
 
     // The real tests, lol
     describe("#ValidateMain", () => {
+        describe("Array schemas", () => {
+            let arraySchema = [
+                {
+                    name: "string",
+                    age: Prudence.isInteger,
+                    isAdmin: "boolean",
+                },
+            ];
+
+            it("Should validate an array of values", () => {
+                expect(
+                    Prudence(
+                        [
+                            {
+                                name: "foo",
+                                age: 12,
+                                isAdmin: true,
+                            },
+                            {
+                                name: "bar",
+                                age: 18,
+                                isAdmin: false,
+                            },
+                        ],
+                        arraySchema
+                    ),
+                    "to be",
+                    null
+                );
+            });
+        });
+
         describe("Flat schemas", () => {
             let flatSchema = {
                 name: "string",
@@ -348,22 +380,37 @@ describe("Prudence Validators", () => {
 
         describe("Options", () => {
             let schema = {
-                foo: "string"
-            }
+                foo: "string",
+            };
 
             it("AllowExcessKeys should allow excess keys", () => {
-                expect(Prudence({foo: "a", bar: 1}, schema, {}, {allowExcessKeys: true}), "to be null");
+                expect(
+                    Prudence({ foo: "a", bar: 1 }, schema, {}, { allowExcessKeys: true }),
+                    "to be null"
+                );
 
                 // no cross-option affecting
-                expect(() => Prudence(undefined, schema, {}, {allowExcessKeys: true}), "to throw");
+                expect(
+                    () => Prudence(undefined, schema, {}, { allowExcessKeys: true }),
+                    "to throw"
+                );
             });
 
             it("throwOnNonObject to throw on non object.", () => {
-                expect(() => Prudence(undefined, schema, {}, {throwOnNonObject: true}), "to throw");
-                expect(() => Prudence(undefined, schema, {}, {throwOnNonObject: false}), "not to throw");
+                expect(
+                    () => Prudence(undefined, schema, {}, { throwOnNonObject: true }),
+                    "to throw"
+                );
+                expect(
+                    () => Prudence(undefined, schema, {}, { throwOnNonObject: false }),
+                    "not to throw"
+                );
 
                 // no cross-option affecting
-                expect(Prudence({foo: "a", bar: 1}, schema, {}, {throwOnNonObject: true}), "not to be null");
+                expect(
+                    Prudence({ foo: "a", bar: 1 }, schema, {}, { throwOnNonObject: true }),
+                    "not to be null"
+                );
             });
         });
 
