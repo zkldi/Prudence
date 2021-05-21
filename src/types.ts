@@ -65,3 +65,5 @@ export interface ValidationFunctionParentOptionsKeychain {
 export type ValidationFunction = ValidationFunctionParentOptionsKeychain;
 
 export type PrudenceReturn = null | PrudenceError;
+
+export * from "./error";
