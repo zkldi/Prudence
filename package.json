@@ -1,12 +1,13 @@
 {
     "name": "prudence",
-    "version": "0.9.6",
+    "version": "0.9.7",
     "description": "The Simple Object Validator.",
     "main": "js/main.js",
     "scripts": {
         "test": "tsc && nyc mocha",
         "lint": "eslint ./src --ext .ts && eslint ./__tests__ --ext .js",
-        "build": "tsc"
+        "build": "tsc",
+        "prepublish": "pnpm build"
     },
     "nyc": {
         "reporter": [

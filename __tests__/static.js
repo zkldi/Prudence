@@ -388,10 +388,6 @@ describe("Static Prudence Methods", () => {
             expect(Prudence.isPositive(5), "to be true");
         });
 
-        it("Should disallow Infinity", () => {
-            expect(Prudence.isPositive(Infinity), "to be", "Expected a positive number.");
-        });
-
         it("Should allow 0", () => {
             expect(Prudence.isPositive(0), "to be true");
         });
@@ -414,14 +410,6 @@ describe("Static Prudence Methods", () => {
 
         it("Should allow positive integers", () => {
             expect(Prudence.isPositiveNonZero(5), "to be true");
-        });
-
-        it("Should disallow Infinity", () => {
-            expect(
-                Prudence.isPositiveNonZero(Infinity),
-                "to be",
-                "Expected a positive non-zero number."
-            );
         });
 
         it("Should disallow 0", () => {
