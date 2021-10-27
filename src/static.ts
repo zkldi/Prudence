@@ -15,7 +15,7 @@ const isInteger = (self: unknown) => Number.isSafeInteger(self) || "Expected an 
  * @returns {ValidationFunction}
  */
 const gt = (number: number) => (self: unknown) =>
-    (Number.isFinite(self) && (self as number) > number) ||
+    (typeof self === "number" && (self as number) > number) ||
     `Expected number to be greater than ${number}.`;
 
 /**
@@ -26,7 +26,7 @@ const gt = (number: number) => (self: unknown) =>
  * @returns {ValidationFunction}
  */
 const gte = (number: number) => (self: unknown) =>
-    (Number.isFinite(self) && (self as number) >= number) ||
+    (typeof self === "number" && (self as number) >= number) ||
     `Expected number to be greater than or equal to ${number}.`;
 
 /**
@@ -37,7 +37,7 @@ const gte = (number: number) => (self: unknown) =>
  * @returns {ValidationFunction}
  */
 const lt = (number: number) => (self: unknown) =>
-    (Number.isFinite(self) && (self as number) < number) ||
+    (typeof self === "number" && (self as number) < number) ||
     `Expected number to be less than ${number}.`;
 
 /**
@@ -48,7 +48,7 @@ const lt = (number: number) => (self: unknown) =>
  * @returns {ValidationFunction}
  */
 const lte = (number: number) => (self: unknown) =>
-    (Number.isFinite(self) && (self as number) <= number) ||
+    (typeof self === "number" && (self as number) <= number) ||
     `Expected number to be less than or equal to ${number}.`;
 
 /**
@@ -125,13 +125,13 @@ function isBoundedInteger(lowerBound: number, upperBound: number) {
  * Determines if a value is a positive number.
  */
 const isPositive = (self: unknown) =>
-    (Number.isFinite(self) && (self as number) >= 0) || "Expected a positive number.";
+    (typeof self === "number" && (self as number) >= 0) || "Expected a positive number.";
 
 /**
  * Determines if a value is a positive number and non-zero.
  */
 const isPositiveNonZero = (self: unknown) =>
-    (Number.isFinite(self) && (self as number) > 0) || "Expected a positive non-zero number.";
+    (typeof self === "number" && (self as number) > 0) || "Expected a positive non-zero number.";
 
 /**
  * Takes a list of items and returns a function that checks if a provided value is inside that array.
