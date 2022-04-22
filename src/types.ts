@@ -1,7 +1,7 @@
 // eslint doesnt like us importing only types, so lets turn that off.
 // eslint-disable-next-line import/no-unresolved
-import { NextFunction, Request, RequestHandler, Response } from "express-serve-static-core";
-import { PrudenceError } from "./error";
+import type { NextFunction, Request, RequestHandler, Response } from "express-serve-static-core";
+import type { PrudenceError } from "./error";
 
 export interface PrudenceOptions {
     /**
