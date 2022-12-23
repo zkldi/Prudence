@@ -1,7 +1,7 @@
 // eslint doesnt like us importing only types, so lets turn that off.
 // eslint-disable-next-line import/no-unresolved
 import type { NextFunction, Response, Request, RequestHandler } from "express-serve-static-core";
-import Prudence from "./main";
+import { p } from "./main";
 import {
     ErrorMessages,
     MiddlewareErrorHandler,
@@ -49,7 +49,7 @@ export function CurryMiddleware(
     return (
         schema: PrudenceSchema,
         errorMessages: ErrorMessages = {},
-        options: Partial<PrudenceOptions> = Prudence.Validator.defaultOptions
+        options: Partial<PrudenceOptions> = p.Validator.defaultOptions
     ): RequestHandler => Middleware(schema, errorHandler, errorMessages, options);
 }
 
@@ -66,15 +66,15 @@ export function Middleware(
     schema: PrudenceSchema,
     errorHandler?: MiddlewareErrorHandler | null,
     errorMessages: ErrorMessages = {},
-    options: Partial<PrudenceOptions> = Prudence.Validator.defaultOptions
+    options: Partial<PrudenceOptions> = p.Validator.defaultOptions
 ): RequestHandler {
     return (req: Request, res: Response, next: NextFunction): void => {
         let err: PrudenceReturn = null;
 
         if (req.method === "GET") {
-            err = Prudence(req.query, schema, errorMessages, options);
+            err = p(req.query, schema, errorMessages, options);
         } else {
-            err = Prudence(req.body, schema, errorMessages, options);
+            err = p(req.body, schema, errorMessages, options);
         }
 
         if (!err) {

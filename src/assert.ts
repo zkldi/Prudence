@@ -2,7 +2,7 @@
  * Thin wrapper for using Prudence as an assertion library
  */
 
-import Prudence from "./main";
+import { p } from "./main";
 import { ErrorMessages, PrudenceOptions, PrudenceSchema } from "./types";
 
 export function assert(
@@ -11,7 +11,7 @@ export function assert(
     errorMessages: ErrorMessages,
     options?: Partial<PrudenceOptions>
 ) {
-    let err = Prudence(obj, schema, errorMessages, options);
+    let err = p(obj, schema, errorMessages, options);
 
     if (err) {
         throw err;
