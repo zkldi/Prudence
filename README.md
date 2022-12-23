@@ -42,8 +42,8 @@ npm i prudence
 ```
 
 ```js
-import Prudence from "prudence"; // ES6 (preferred)
-const Prudence = require("prudence").default; // CJS
+import { p } from "prudence"; // ES6 (preferred)
+const { p } = require("prudence"); // CJS
 ```
 
 ## Returns
@@ -51,7 +51,7 @@ const Prudence = require("prudence").default; // CJS
 Prudence returns null on success, and an error object on failure.
 
 ```js
-let err = Prudence(/* */);
+let err = p(/* */);
 if (err) {}
 ```
 
@@ -70,11 +70,11 @@ let schema = {
     diff: "boolean",
     extension: ["string"],
     package: "string",
-    slow: Prudence.isPositiveInteger,
-    ui: Prudence.isIn("bdd", "tdd")
+    slow: p.isPositiveInteger,
+    ui: p.isIn("bdd", "tdd")
 }
 
-let err = Prudence(userInput, schema);
+let err = p(userInput, schema);
 
 if (err) {
     console.error(err);
@@ -100,7 +100,7 @@ let schema = {
 // send the user an error message (your 400 handler here, basically).
 let errorHandler = (req, res, next, errObject) => res.status(400).send(errObject.message);
 
-router.post("/register", Prudence.middleware(schema, errorHandler), (req, res) => {
+router.post("/register", p.middleware(schema, errorHandler), (req, res) => {
     return res.status(200).send("registered account!");
 });
 ```
@@ -112,9 +112,9 @@ to help with validation.
 
 ```js
 let schema = {
-    age: Prudence.isPositiveInteger,
-    favouriteFruit: Prudence.isIn("apple", "banana", "orange"),
-    testScore: Prudence.isBoundedInteger(0, 60)
+    age: p.isPositiveInteger,
+    favouriteFruit: p.isIn("apple", "banana", "orange"),
+    testScore: p.isBoundedInteger(0, 60)
     // etc.
 }
 ```
