@@ -1,5 +1,7 @@
 # Prudence (Logo here, please)
 
+**use `zod` instead. This library is deprecated and only really used by its author. Sorry about that.**
+
 The simple JS object validator.
 
 **Prudence is currently heavily in development, and should not be used in any
